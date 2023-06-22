@@ -1,4 +1,3 @@
-import { set } from "animejs";
 import axios from "axios";
 import { useState, useEffect } from "react";
 
