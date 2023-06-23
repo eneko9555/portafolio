@@ -15,7 +15,9 @@ const page = () => {
 
   async function showAllProjects() {
     try {
-      const { data } = await axios("http://localhost:4000/api/projects/all");
+      const { data } = await axios(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects/all`
+      );
       setLimit(data);
       setAll(true);
     } catch (error) {
