@@ -66,7 +66,7 @@ const page = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, delay: 1 }}
           >
-            <p className="text-white text-lg">
+            <p className="text-white text-lg mb-2">
               Si estás interesado en contactar conmigo, enviame un email a
               traves de este formulario o enviame un email directamente a{" "}
               <Link
@@ -84,7 +84,7 @@ const page = () => {
                 <input
                   required
                   placeholder="Nombre"
-                  className=" text-white w-full md:w-4/5  lg:w-3/5 mt-6 rounded-lg p-2 py-3 bg-transparent border border-white focus:text-black focus:bg-gray-200 outline-none focus:opacity-100 mb-5 "
+                  className=" text-white w-full md:w-4/5  lg:w-3/5 mt-6 rounded-lg p-2 py-4 bg-transparent border border-white focus:text-black focus:bg-gray-200 outline-none focus:opacity-100 mb-5 "
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -96,7 +96,7 @@ const page = () => {
                   required
                   placeholder="Email"
                   type="email"
-                  className="w-full md:w-4/5  lg:w-3/5 focus:text-black text-white mt-5 rounded-lg p-2 py-3 bg-transparent border border-white  focus:bg-gray-200 outline-none focus:opacity-100 mb-5"
+                  className="w-full md:w-4/5  lg:w-3/5 focus:text-black text-white mt-5 rounded-lg p-2 py-4 bg-transparent border border-white  focus:bg-gray-200 outline-none focus:opacity-100 mb-5"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 ></input>
@@ -106,7 +106,7 @@ const page = () => {
                 <textarea
                   required
                   placeholder="Mensaje"
-                  className="w-full md:w-4/5 lg:w-3/5 focus:text-black text-white  mt-5 rounded-lg p-2 py-3 bg-transparent border border-white  focus:bg-gray-200 outline-none focus:opacity-100"
+                  className="w-full md:w-4/5 lg:w-3/5 min-h-[8rem] focus:text-black text-white  mt-5 rounded-lg p-2 py-4 bg-transparent border border-white  focus:bg-gray-200 outline-none focus:opacity-100"
                   type="text"
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -115,7 +115,7 @@ const page = () => {
               <ContactModal isOpen={isOpen} setIsOpen={setIsOpen} />
               <button
                 type="submit"
-                className="btn w-full md:w-4/5 lg:w-3/5 font-bold uppercase bg-gray-200 rounded-lg p-3 mt-3 hover:bg-gray-400 duration-300 cursor-pointer"
+                className="btn w-full md:w-4/5 lg:w-3/5 font-bold uppercase bg-gray-200 rounded-lg p-3 py-4 mt-8 hover:bg-gray-400 duration-300 cursor-pointer"
               >
                 {loading ? (
                   <Loading />
@@ -148,7 +148,7 @@ const page = () => {
             <div className="flex items-center gap-3 mt-16 -mb-5 text-gray-100 ">
               <Link
                 href={"/"}
-                className="text-gray-100 text-md font-semibold hover:text-gray-400 duration-300"
+                className="text-gray-100 text-lg font-semibold hover:text-gray-400 duration-300"
               >
                 Volver a Inicio
               </Link>
@@ -169,7 +169,7 @@ const page = () => {
               </svg>
             </div>
 
-            <div className="sm:flex justify-between  items-center mt-14 mb-5   gap-2 border-t-2">
+            <div className="sm:flex justify-between  items-center mt-14 mb-5 lg:mb-16    gap-2 border-t-2">
               <div className="flex gap-3 pt-5">
                 <div className="bg-white p-1 rounded-lg shadow-sm border-b-4 border-gray-400 hover:border-none duration-100">
                   <Link target="_blank" href={"https://github.com/eneko9555"}>

@@ -13,6 +13,9 @@ self.__RSC_CSS_MANIFEST={
     ],
     "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\projects\\page": [
       "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\globals.css"
+    ],
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\contact\\page": [
+      "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\globals.css"
     ]
   }
 }

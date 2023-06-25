@@ -641,6 +641,12 @@ video {
 .min-h-screen {
   min-height: 100vh;
 }
+.min-h-\[10rem\] {
+  min-height: 10rem;
+}
+.min-h-\[8rem\] {
+  min-height: 8rem;
+}
 .w-10 {
   width: 2.5rem;
 }
@@ -919,6 +925,14 @@ video {
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
+}
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 .pb-4 {
   padding-bottom: 1rem;
@@ -1416,6 +1430,10 @@ video {
 
 @media (min-width: 768px) {
 
+  .md\:mb-0 {
+    margin-bottom: 0px;
+  }
+
   .md\:flex {
     display: flex;
   }
@@ -1466,6 +1484,14 @@ video {
 
   .lg\:mt-\[7rem\] {
     margin-top: 7rem;
+  }
+
+  .lg\:mb-10 {
+    margin-bottom: 2.5rem;
+  }
+
+  .lg\:mb-16 {
+    margin-bottom: 4rem;
   }
 
   .lg\:flex {

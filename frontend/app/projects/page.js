@@ -98,7 +98,7 @@ const page = () => {
               transition={{ duration: 1 }}
               exit={{ opacity: 0, y: -50 }}
             >
-              <div className="mt-8 justify-center m-auto flex gap-2 -mb-5">
+              <div className="mt-8 justify-center m-auto flex gap-2 -mb-5 md:mb-0">
                 <button
                   type="button"
                   className={`text-white  text-lg  p-2 w-20  duration-150 border border-white ${
@@ -137,7 +137,7 @@ const page = () => {
           )}
         </AnimatePresence>
 
-        <div className=" grid grid-flow-row grid-cols-1 xl:grid-cols-2 gap-12 mt-10 m-auto justify-center">
+        <div className=" grid grid-flow-row grid-cols-1 xl:grid-cols-2 gap-12 mt-10 m-auto justify-center ">
           {!category
             ? limit?.map((project) => (
                 <Project
@@ -162,11 +162,11 @@ const page = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1 }}
           >
-            <div className=" m-auto text-center flex items-center gap-3 mt-20 justify-center text-white hover:text-gray-400 duration-300">
-              <button
-                className=" font-bold text-xl  "
-                onClick={() => showAllProjects()}
-              >
+            <div
+              className=" m-auto text-center flex items-center gap-3 mt-20 justify-center hover:text-gray-400 duration-300 bg-white rounded-lg p-3  text-black hover:cursor-pointer  "
+              onClick={() => showAllProjects()}
+            >
+              <button className=" font-bold text-xl  ">
                 Ver más proyectos
               </button>
               <svg
@@ -194,7 +194,7 @@ const page = () => {
           <div className="flex items-center gap-3 mt-20  text-gray-100  ">
             <Link
               href={"/contact"}
-              className="text-gray-100 text-md font-semibold hover:text-gray-400 duration-300"
+              className="text-gray-100 text-lg font-semibold hover:text-gray-400 duration-300"
             >
               Contacto
             </Link>
@@ -214,7 +214,7 @@ const page = () => {
             </svg>
           </div>
 
-          <div className="sm:flex justify-between items-center mt-10 sm:mt-8 mb-5   border-t-2 pt-5  gap-2">
+          <div className="sm:flex justify-between items-center mt-10 sm:mt-8 mb-5 lg:mb-16    border-t-2 pt-5  gap-2">
             <div className="flex items-center gap-3">
               <div className="bg-white p-1 rounded-lg shadow-sm border-b-4 border-gray-400 hover:border-none duration-100">
                 <Link target="_blank" href={"https://github.com/eneko9555"}>

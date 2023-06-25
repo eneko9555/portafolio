@@ -10,10 +10,10 @@ mongoose
 const projects = [
   {
     name: "PManager",
-    description: "Gestión y colaboración de proyectos en tiempo real",
+    description: "Gestión de proyectos en colaboración a tiempo real.",
     images: ["pmanager-foto1", "pmanager-foto2"],
     about:
-      "PManager es una aplicación para la gestión y colaboración de proyectos en tiempo real. Con una interfaz intuitiva que facilita la organización de tareas, seguimiento del progreso y comunicación en equipos. Permite crear proyectos, asignar tareas, establecer fechas límite y la colaboración entre diferentes usuarios",
+      "PManager es una aplicación para la gestión y colaboración de proyectos a tiempo real. Con una interfaz intuitiva que facilita la organización de tareas, seguimiento del progreso y comunicación entre equipos. Permite crear proyectos, asignar tareas, establecer fechas límite, todo ello en colabaración con diferentes usuarios.",
     technologies: [
       "React",
       "Node",
@@ -30,10 +30,10 @@ const projects = [
   },
   {
     name: "Files Send",
-    description: "Subida y descarga de archivos de manera privada y segura",
+    description: "Subida y descarga de archivos de manera privada y segura.",
     images: ["files-send-foto1", "files-send-foto2"],
     about:
-      "Files Send permite compartir archivos de manera segura entre usuarios, dando mayores beneficios a los usuarios con cuenta de acceso.",
+      "Files Send permite compartir archivos de manera segura. Tendras más beneficios si creas tu propia cuenta de acceso.",
     technologies: [
       "React",
       "Node",
@@ -50,11 +50,12 @@ const projects = [
   },
   {
     name: "Administrador de presupuesto",
-    description: "Administra y controla tus gastos de una manera organizada",
+    description:
+      "Esta aplicación te ayuda a controlar tus gastos de manera organizada.",
     images: ["controlador-gastos-foto1", "controlador-gastos-foto2"],
     about:
       "Añade, filtra, edita y controla tus gastos desde una interfaz intuitiva y fácil de usar.",
-    technologies: ["React", "Javascript", "Css", "Context", "LocalStorage"],
+    technologies: ["React", "Javascript", "CSS", "Context", "LocalStorage"],
     account: [],
     website: "https://tourmaline-melomakarona-bccf40.netlify.app/",
     github: "https://github.com/eneko9555/control-gastos",
@@ -63,10 +64,10 @@ const projects = [
   {
     name: "Quiosco de comida",
     description:
-      "Aplicación que permite añadir y gestionar pedidos en tiempo real.",
+      "Aplicación que permite añadir y gestionar pedidos a tiempo real.",
     images: ["quiosco1", "quiosco2"],
     about:
-      "La aplicación está diseñada para agilizar el proceso de pedidos en un entorno de quiosco o punto de venta. Los clientes pueden explorar el menú, seleccionar los productos deseados y personalizar sus pedidos según sus preferencias. Por otro lado, el área de servicio de la aplicación permite al personal recibir, procesar y administrar los pedidos entrantes de manera organizada.",
+      "La aplicación está diseñada para agilizar el proceso de pedidos en un entorno de quiosco o punto de venta. Los clientes pueden explorar el menú, seleccionar los productos deseados y personalizar sus pedidos según sus preferencias. Por otro lado, el área de servicio de la aplicación permite al personal recibir, procesar y administrar los pedidos entrantes de manera organizada y efectiva.",
     technologies: [
       "Next",
       "Javascript",
@@ -86,7 +87,7 @@ const projects = [
     description: "Página web relacionada con el mundo de la música.",
     images: ["guitarra1", "guitarra2"],
     about:
-      "Se trata de una página web que ofrece una experiencia completa para los amantes de la música y las guitarras.  Los usuarios pueden navegar por el catálogo, ver detalles de cada guitarra, incluyendo imágenes y descripciones además pueden añadir guitarras al carrito de compra, administrando las cantidades y viendo los precios en tiempo real.",
+      "Se trata de una página web que ofrece una experiencia completa para los amantes de la música y las guitarras.  Los usuarios pueden navegar por el catálogo, ver detalles de cada guitarra, incluyendo imágenes y descripciones además pueden añadir guitarras al carrito de compra, administrando las cantidades y viendo los precios a tiempo real.",
     technologies: [
       "Next",
       "Javascript",
@@ -103,7 +104,7 @@ const projects = [
   {
     name: "Administrador de Pacientes ",
     description:
-      "Aplicación que permite la gestión y organización de pacientes",
+      "Aplicación que permite la gestión y organización de pacientes.",
     images: ["pacientes1", "pacientes2"],
     about:
       "Con esta aplicación cada usuario tendrá una cuenta en la que puedes mantener un registro centralizado de la información de tus pacientes, facilitando su seguimiento y asegurando una gestión eficiente. Los usuarios podrán recuperar su contraseña en caso de perdida mediante correo electronico.",
@@ -153,7 +154,7 @@ const projects = [
       "Aplicación que permite ver el valor actual de las criptomonedas.",
     images: ["cripto1", "cripto2"],
     about:
-      "Con una interfaz sencilla e intuitiva permite ver el valor actual de la criptomoneda seleccionada, así como los cambios en las últimas 24h",
+      "Con una interfaz sencilla e intuitiva permite ver el valor actual de la criptomoneda seleccionada, así como los cambios en las últimas 24h.",
     technologies: ["React", "Javascript", "Vite", "Style Components"],
     account: [],
     website: "https://remarkable-sable-3efc6a.netlify.app/",
@@ -188,9 +189,9 @@ const projects = [
   },
   {
     name: "Buscador imágenes",
-    description: "Página web que permite la busqueda de imagenes",
+    description: "Página web que permite la busqueda de imágenes.",
     images: ["pixabay1", "pixabay2"],
-    about: "Permite buscar imagenes y descargarlas usando la API de pixabay.",
+    about: "Permite buscar imágenes y descargarlas usando la API de pixabay.",
     technologies: ["Javascript", "CSS"],
     account: [],
     website: "https://bright-sherbet-972694.netlify.app/",
@@ -198,12 +199,12 @@ const projects = [
     category: "frontend",
   },
   {
-    name: "Mis Peliculas",
+    name: "Mis peliculas",
     description:
-      "Página web personal que permite guardar las peliculas favoritas",
+      "Página web personal que permite publicar y guardar mis películas favoritas.",
     images: ["peli1", "peli2"],
     about:
-      "Permite guardar en localstorage titulos de peliculas y una pequeña descripción, también permite la búsqueda por titulo.",
+      "Permite guardar en localstorage títulos de peliculas y una pequeña descripción, también permite la búsqueda por título.",
     technologies: ["Javascript", "CSS", "POO", "Localstorage"],
     account: [],
     website: "https://preeminent-palmier-12979d.netlify.app/",

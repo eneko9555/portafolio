@@ -61,7 +61,7 @@ export default function Home() {
           <div className="flex items-center mt-8 sm:mt-8 gap-3 text-gray-100">
             <Link
               href={"/about"}
-              className="text-gray-100 text-md font-semibold hover:text-gray-400 duration-300"
+              className="text-gray-100 text-lg font-semibold hover:text-gray-400 duration-300"
             >
               Sobre mí
             </Link>
@@ -80,6 +80,7 @@ export default function Home() {
               />
             </svg>
           </div>
+
           <div className="sm:flex justify-between items-center mt-10 mb-10 gap-2 pt-5 border-t-2">
             <div className="flex gap-3">
               <div className="bg-white p-1 rounded-lg shadow-sm border-b-4 border-gray-400 hover:border-none duration-100">

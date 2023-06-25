@@ -44,6 +44,11 @@ const skills = [
     category: "frontend",
   },
   {
+    name: "Redux",
+    image: "redux.png",
+    category: "frontend",
+  },
+  {
     name: "Node",
     image: "node.png",
     category: "backend",
@@ -78,6 +83,11 @@ const skills = [
     name: "Rest API",
     image: "rest.png",
     category: "backend",
+  },
+  {
+    name: "VSCode",
+    image: "vscode.png",
+    category: "tools",
   },
   {
     name: "Terminal",

@@ -167,7 +167,7 @@ const page = () => {
           <div className="flex items-center gap-3 mt-10 -mb-8 text-gray-100 ">
             <Link
               href={"/projects"}
-              className="text-gray-100 text-md font-semibold hover:text-gray-400 duration-300"
+              className="text-gray-100 text-lg font-semibold hover:text-gray-400 duration-300"
             >
               Ver proyectos
             </Link>
@@ -186,7 +186,7 @@ const page = () => {
               />
             </svg>
           </div>
-          <div className="sm:flex items-center mt-16 mb-5 justify-between pt-5 border-t-2">
+          <div className="sm:flex items-center mt-16 mb-5 lg:mb-16  justify-between pt-5 border-t-2">
             <div className="flex gap-3">
               <div className="bg-white p-1 rounded-lg shadow-sm border-b-4 border-gray-400 hover:border-none duration-100">
                 <Link target="_blank" href={"https://github.com/eneko9555"}>
