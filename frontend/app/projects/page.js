@@ -54,7 +54,7 @@ const page = () => {
 
   return (
     <>
-      <div className="text-gray-100 text-8xl scale-125 translate-y-80 mt-20 tracking-widest opacity-5  font-semibold font-mono absolute rotate-90 right-0  translate-x-44  cursor-default -z-50 ">
+      <div className="text-gray-100 text-8xl hidden md:block scale-125 translate-y-80 mt-20 tracking-widest opacity-5  font-semibold font-mono absolute rotate-90 right-0  translate-x-44  cursor-default -z-50 ">
         Proyectos
       </div>
 

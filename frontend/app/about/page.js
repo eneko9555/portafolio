@@ -40,7 +40,7 @@ const page = () => {
 
   return (
     <>
-      <div className="text-gray-100 text-8xl scale-125  translate-y-96 tracking-widest opacity-5  font-bold font-mono absolute rotate-90 right-0 translate-x-48 mr-12 cursor-default">
+      <div className="text-gray-100 text-8xl hidden md:block scale-125  translate-y-96 tracking-widest opacity-5  font-bold font-mono absolute rotate-90 right-0 translate-x-48 mr-12 cursor-default">
         Sobre mí
       </div>
       <main className="p-4 w-full sm:p-0 sm:w-3/4 md:w-8/12 lg:w-4/6 m-auto sm:mt-12 lg:mt-32  ">

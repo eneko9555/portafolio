@@ -45,7 +45,7 @@ const page = () => {
 
   return (
     <>
-      <div className="text-gray-100 text-8xl scale-125 translate-y-80 mt-10 tracking-widest opacity-5  font-semibold font-mono absolute rotate-90 right-0  translate-x-36  cursor-default ">
+      <div className="text-gray-100 hidden md:block text-8xl scale-125 translate-y-80 mt-10 tracking-widest opacity-5  font-semibold font-mono absolute rotate-90 right-0  translate-x-36  cursor-default ">
         Contacto
       </div>
 
