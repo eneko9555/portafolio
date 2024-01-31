@@ -62,9 +62,8 @@ const page = () => {
             Soy desarrollador web full stack con conocimientos en sistemas y
             redes. Me considero una persona autodidacta que siempre intenta
             buscar nuevas formas para aprender y crecer en el campo de la
-            programación. Recientemente, he dado un paso más, y estoy realizando
-            el bootcamp de desarrollo web full stack de Isdi Coders, con el que
-            espero enriquecer mi formación.{' '}
+            programación. Recientemente, he dado un paso más, y he realizado
+            el bootcamp de Desarrollo Web Full Stack de Isdi Coders, con el que he ampliado mi formación.{' '}
           </p>
           <p className='text-white text-lg'>
             Estoy abierto a nuevas oportunidades laborales donde pueda
