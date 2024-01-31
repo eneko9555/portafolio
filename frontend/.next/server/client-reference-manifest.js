@@ -230,58 +230,6 @@ self.__RSC_MANIFEST={
         "async": false
       }
     },
-    "(app-client)/./app/page.js": {
-      "*": {
-        "id": "(sc_client)/./app/page.js",
-        "name": "*",
-        "chunks": [
-          "app/page:static/chunks/app/page.js"
-        ],
-        "async": false
-      },
-      "": {
-        "id": "(sc_client)/./app/page.js",
-        "name": "",
-        "chunks": [
-          "app/page:static/chunks/app/page.js"
-        ],
-        "async": false
-      },
-      "default": {
-        "id": "(sc_client)/./app/page.js",
-        "name": "default",
-        "chunks": [
-          "app/page:static/chunks/app/page.js"
-        ],
-        "async": false
-      }
-    },
-    "(app-client)/./node_modules/next/dist/client/link.js": {
-      "*": {
-        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
-        "name": "*",
-        "chunks": [
-          "app/about/page:static/chunks/app/about/page.js"
-        ],
-        "async": false
-      },
-      "": {
-        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
-        "name": "",
-        "chunks": [
-          "app/about/page:static/chunks/app/about/page.js"
-        ],
-        "async": false
-      },
-      "default": {
-        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
-        "name": "default",
-        "chunks": [
-          "app/about/page:static/chunks/app/about/page.js"
-        ],
-        "async": false
-      }
-    },
     "(app-client)/./app/components/Header.js": {
       "*": {
         "id": "(sc_client)/./app/components/Header.js",
@@ -334,28 +282,28 @@ self.__RSC_MANIFEST={
         "async": false
       }
     },
-    "(app-client)/./app/contact/page.js": {
+    "(app-client)/./node_modules/next/dist/client/link.js": {
       "*": {
-        "id": "(sc_client)/./app/contact/page.js",
+        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "*",
         "chunks": [
-          "app/contact/page:static/chunks/app/contact/page.js"
+          "app/page:static/chunks/app/page.js"
         ],
         "async": false
       },
       "": {
-        "id": "(sc_client)/./app/contact/page.js",
+        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "",
         "chunks": [
-          "app/contact/page:static/chunks/app/contact/page.js"
+          "app/page:static/chunks/app/page.js"
         ],
         "async": false
       },
       "default": {
-        "id": "(sc_client)/./app/contact/page.js",
+        "id": "(sc_client)/./node_modules/next/dist/client/link.js",
         "name": "default",
         "chunks": [
-          "app/contact/page:static/chunks/app/contact/page.js"
+          "app/page:static/chunks/app/page.js"
         ],
         "async": false
       }
@@ -411,12 +359,67 @@ self.__RSC_MANIFEST={
         ],
         "async": false
       }
+    },
+    "(app-client)/./app/contact/page.js": {
+      "*": {
+        "id": "(sc_client)/./app/contact/page.js",
+        "name": "*",
+        "chunks": [
+          "app/contact/page:static/chunks/app/contact/page.js"
+        ],
+        "async": false
+      },
+      "": {
+        "id": "(sc_client)/./app/contact/page.js",
+        "name": "",
+        "chunks": [
+          "app/contact/page:static/chunks/app/contact/page.js"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./app/contact/page.js",
+        "name": "default",
+        "chunks": [
+          "app/contact/page:static/chunks/app/contact/page.js"
+        ],
+        "async": false
+      }
+    },
+    "(app-client)/./app/page.js": {
+      "*": {
+        "id": "(sc_client)/./app/page.js",
+        "name": "*",
+        "chunks": [
+          "app/page:static/chunks/app/page.js"
+        ],
+        "async": false
+      },
+      "": {
+        "id": "(sc_client)/./app/page.js",
+        "name": "",
+        "chunks": [
+          "app/page:static/chunks/app/page.js"
+        ],
+        "async": false
+      },
+      "default": {
+        "id": "(sc_client)/./app/page.js",
+        "name": "default",
+        "chunks": [
+          "app/page:static/chunks/app/page.js"
+        ],
+        "async": false
+      }
     }
   },
   "edgeSSRModuleMapping": {},
   "cssFiles": {
     "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\layout": [
       "static/css/app/layout.css"
+    ],
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\projects\\page": [
+      "static/css/app/projects/page.css"
     ]
   },
   "clientModules": {
@@ -1092,78 +1095,6 @@ self.__RSC_MANIFEST={
       ],
       "async": false
     },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\page.js": {
-      "id": "(app-client)/./app/page.js",
-      "name": "*",
-      "chunks": [
-        "app/page:static/chunks/app/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\page.js#": {
-      "id": "(app-client)/./app/page.js",
-      "name": "",
-      "chunks": [
-        "app/page:static/chunks/app/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\page.js#default": {
-      "id": "(app-client)/./app/page.js",
-      "name": "default",
-      "chunks": [
-        "app/page:static/chunks/app/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\client\\link.js": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "*",
-      "chunks": [
-        "app/about/page:static/chunks/app/about/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\esm\\client\\link.js": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "*",
-      "chunks": [
-        "app/about/page:static/chunks/app/about/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\client\\link.js#": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "",
-      "chunks": [
-        "app/about/page:static/chunks/app/about/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\esm\\client\\link.js#": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "",
-      "chunks": [
-        "app/about/page:static/chunks/app/about/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\client\\link.js#default": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "default",
-      "chunks": [
-        "app/about/page:static/chunks/app/about/page.js"
-      ],
-      "async": false
-    },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\esm\\client\\link.js#default": {
-      "id": "(app-client)/./node_modules/next/dist/client/link.js",
-      "name": "default",
-      "chunks": [
-        "app/about/page:static/chunks/app/about/page.js"
-      ],
-      "async": false
-    },
     "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\globals.css#": {
       "id": "null",
       "name": "default",
@@ -1219,29 +1150,60 @@ self.__RSC_MANIFEST={
       ],
       "async": false
     },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\contact\\page.js": {
-      "id": "(app-client)/./app/contact/page.js",
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\client\\link.js": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "*",
       "chunks": [
-        "app/contact/page:static/chunks/app/contact/page.js"
+        "app/page:static/chunks/app/page.js"
       ],
       "async": false
     },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\contact\\page.js#": {
-      "id": "(app-client)/./app/contact/page.js",
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\esm\\client\\link.js": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "*",
+      "chunks": [
+        "app/page:static/chunks/app/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\client\\link.js#": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
       "name": "",
       "chunks": [
-        "app/contact/page:static/chunks/app/contact/page.js"
+        "app/page:static/chunks/app/page.js"
       ],
       "async": false
     },
-    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\contact\\page.js#default": {
-      "id": "(app-client)/./app/contact/page.js",
-      "name": "default",
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\esm\\client\\link.js#": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "",
       "chunks": [
-        "app/contact/page:static/chunks/app/contact/page.js"
+        "app/page:static/chunks/app/page.js"
       ],
       "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\client\\link.js#default": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "default",
+      "chunks": [
+        "app/page:static/chunks/app/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\next\\dist\\esm\\client\\link.js#default": {
+      "id": "(app-client)/./node_modules/next/dist/client/link.js",
+      "name": "default",
+      "chunks": [
+        "app/page:static/chunks/app/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\node_modules\\react-responsive-carousel\\lib\\styles\\carousel.min.css#": {
+      "id": "null",
+      "name": "default",
+      "chunks": [
+        "static/css/app/projects/page.css"
+      ]
     },
     "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\projects\\page.js": {
       "id": "(app-client)/./app/projects/page.js",
@@ -1288,6 +1250,54 @@ self.__RSC_MANIFEST={
       "name": "default",
       "chunks": [
         "app/about/page:static/chunks/app/about/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\contact\\page.js": {
+      "id": "(app-client)/./app/contact/page.js",
+      "name": "*",
+      "chunks": [
+        "app/contact/page:static/chunks/app/contact/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\contact\\page.js#": {
+      "id": "(app-client)/./app/contact/page.js",
+      "name": "",
+      "chunks": [
+        "app/contact/page:static/chunks/app/contact/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\contact\\page.js#default": {
+      "id": "(app-client)/./app/contact/page.js",
+      "name": "default",
+      "chunks": [
+        "app/contact/page:static/chunks/app/contact/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\page.js": {
+      "id": "(app-client)/./app/page.js",
+      "name": "*",
+      "chunks": [
+        "app/page:static/chunks/app/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\page.js#": {
+      "id": "(app-client)/./app/page.js",
+      "name": "",
+      "chunks": [
+        "app/page:static/chunks/app/page.js"
+      ],
+      "async": false
+    },
+    "C:\\Users\\eneko\\OneDrive\\Escritorio\\Programación\\Portafolio\\frontend\\app\\page.js#default": {
+      "id": "(app-client)/./app/page.js",
+      "name": "default",
+      "chunks": [
+        "app/page:static/chunks/app/page.js"
       ],
       "async": false
     }

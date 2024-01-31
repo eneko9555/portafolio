@@ -23,6 +23,14 @@ const projectSchema = mongoose.Schema(
     category: {
       type: String,
     },
+    isMain: {
+      type: Boolean,
+      default: false
+    },
+    instagram: {
+      type: String,
+      default: null
+    }
   },
   { timestamps: true }
 );

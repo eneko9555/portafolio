@@ -211,6 +211,33 @@ const projects = [
     github: "https://github.com/eneko9555/peliculas-localstorage-js",
     category: "frontend",
   },
+  {
+    name: "Askesis",
+    description:
+      "Plataforma online para entrenadores y gimnasios.",
+    images: ["askesis1", "askesis2", "askesis3", "askesis4"],
+    about:
+      "Aplicación web que permite la creación y organización de ejercicios y rutinas, subida de imagenes y videos.  Como también asignar rutinas a usuarios y ver el progreso de cada uno. Incorpora chat a tiempo real para mejorar la comunicación entre el usuario y el entrenador.",
+    technologies: ["Next", "TailwindCss", "Node", "SocketIO", "Context API", "MongoDB"],
+    account: [],
+    website: "https://askesis.app/",
+    category: "fullstack",
+    isMain: true,
+    instagram: "https://www.instagram.com/askesis.app/"
+  },
+  {
+    name: "Tienda alimentación Amaia",
+    description:
+      "Landing page para tienda de alimentación.",
+    images: ["tienda1", "tienda2"],
+    about:
+      "Lading page para tienda de alimentación situada en Valle de Trapaga, incluye promoción de la tienda y posibilidad de pedidos.",
+    technologies: ["Next", "TailwindCss"],
+    account: [],
+    website: "https://tienda-alimentacion.vercel.app/",
+    category: "fullstack",
+    isMain: true
+  },
 ];
 
 const seedDB = async () => {

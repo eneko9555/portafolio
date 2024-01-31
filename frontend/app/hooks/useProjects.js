@@ -1,25 +1,25 @@
-import axios from "axios";
-import { useState, useEffect } from "react";
+import axios from 'axios'
+import { useState, useEffect } from 'react'
 
 const useProjects = () => {
-  const [limit, setLimit] = useState();
+  const [limit, setLimit] = useState()
 
-  async function getProjects() {
+  async function getProjects () {
     try {
       const { data } = await axios(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/projects`
-      );
-      setLimit(data);
+      )
+      setLimit(data)
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
   useEffect(() => {
-    getProjects();
-  }, []);
+    getProjects()
+  }, [])
 
-  return [limit, setLimit, getProjects];
-};
+  return [limit, setLimit, getProjects]
+}
 
-export default useProjects;
+export default useProjects

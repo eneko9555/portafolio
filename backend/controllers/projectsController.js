@@ -19,6 +19,16 @@ const getAllProjects = async (req, res) => {
   }
 };
 
+const getMainProjects = async (req, res) => {
+  try {
+    const projects = await Project.find({ isMain: true });
+    console.log(projects);
+    res.status(200).json(projects);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getProject = async (req, res) => {
   const { id } = req.params;
 
@@ -41,4 +51,4 @@ const getProject = async (req, res) => {
   }
 };
 
-export { getProjects, getProject, getAllProjects };
+export { getProjects, getProject, getAllProjects, getMainProjects };
