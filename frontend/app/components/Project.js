@@ -29,7 +29,8 @@ const Project = ({ project, setVisible }) => {
         transition={{ duration: 1 }}
       >
         <div
-          className='image w-full rounded-lg m-auto mt-5 relative overflow-hidden border-b-4 border-l-4 border-gray-400  '
+          className='image w-full rounded-lg m-auto mt-5 relative overflow-hidden 
+           border-white border-2 '
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -39,11 +40,10 @@ const Project = ({ project, setVisible }) => {
             alt={`Imagen del proyecto ${name}`}
           />
           <div
-            className={`${
-              hover
-                ? 'block -mt-24 pb-4 sm:pb-5 sm:-mt-26 sm:-translate-y-2 2xl:-mt-32 '
-                : 'opacity-0'
-            } absolute p-3 w-full rounded-md duration-500
+            className={`${hover
+              ? 'block -mt-24 pb-4 sm:pb-5 sm:-mt-26 sm:-translate-y-2 2xl:-mt-32 '
+              : 'opacity-0'
+              } absolute p-3 w-full rounded-md duration-500
              bg-gradient-to-bl from-gray-800 to-black text-white`}
           >
             <div className='opacity-100 description'>

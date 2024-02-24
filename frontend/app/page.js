@@ -96,8 +96,9 @@ export default function Home() {
               <div className='bg-white p-1 rounded-lg shadow-sm border-b-4 border-gray-400 hover:border-none duration-100 '>
                 <Link
                   target='_blank'
-                  href='/'
-                  className='pointer-events-none' rel='noreferrer'
+                  href='https://www.linkedin.com/in/eneko-fernández-garcía-790b4b265'
+
+                  rel='noreferrer'
                 >
                   {' '}
                   <img
@@ -130,7 +131,7 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
-      </main>
+      </main >
     </>
   )
 }
