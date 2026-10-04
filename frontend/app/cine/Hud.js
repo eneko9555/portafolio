@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { roomName } from './world'
 import { SLIDES, CONTACT } from './slides'
 
@@ -113,9 +114,14 @@ export default function Hud ({ started, onStart, room, target, seatedSala, slide
   return (
     <div className='pointer-events-none absolute inset-0 flex flex-col justify-between p-4 sm:p-6'>
       <div className='flex items-start justify-between gap-4'>
-        <button type='button' onClick={onToggleSound} aria-pressed={sound} className='btn-ghost pointer-events-auto bg-bg/70 backdrop-blur-md'>
-          Sonido: {sound ? 'sí' : 'no'}
-        </button>
+        <div className='pointer-events-auto flex flex-wrap gap-2'>
+          <Link href='/' className='btn-ghost bg-bg/70 backdrop-blur-md'>
+            <span aria-hidden='true'>←</span> Volver al portfolio
+          </Link>
+          <button type='button' onClick={onToggleSound} aria-pressed={sound} className='btn-ghost bg-bg/70 backdrop-blur-md'>
+            Sonido: {sound ? 'sí' : 'no'}
+          </button>
+        </div>
         <p className='label rounded-full border border-line bg-bg/70 px-4 py-2.5 backdrop-blur-md' aria-live='polite'>
           {roomName(room)}
         </p>
