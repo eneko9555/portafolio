@@ -2,20 +2,26 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
-import { SCREEN, canStand, nearestSeat, roomAt } from './world'
+import Person from './Person'
+import { SCREEN, canStand, nearestSeat, nearestStaff, roomAt, salaById, salaPoint } from './world'
+import { sounds } from './audio'
 
 const WALK_SPEED = 3.4
-const RUN_SPEED = 5.6
+const RUN_SPEED = 5.8
 const TURN_SPEED = 2
-const CAMERA_DISTANCE = 4.4
-const HEAD_HEIGHT = 1.45
+const CAMERA_DISTANCE = 4.6
+const HEAD_HEIGHT = 1.5
+const BASE_FOV = 55
+const PLAYER_LOOK = { skin: '#e9bd97', hair: '#2a1d14', top: '#f2f2f0', bottom: '#23232b' }
 
 const damp = (rate, delta) => 1 - Math.exp(-rate * delta)
 
-// Muñeco provisional, movimiento con colisiones y cámara en tercera persona.
-// game es un ref con el estado que cambia cada fotograma; los cambios que afectan a la interfaz salen por onChange.
-export default function Player ({ game, wallsRef, onChange }) {
+// Jugador: movimiento con colisiones, cámara en tercera persona y detección de con qué se puede interactuar.
+// game es un ref con el estado que cambia cada fotograma; lo que afecta a la interfaz se avisa con onChange.
+export default function Player ({ game, wallsRef, onChange, popcorn, drink }) {
   const figure = useRef()
+  const motion = useRef({ moving: false, eating: 0, drinking: 0 })
+  const stride = useRef(0)
   const { camera, gl } = useThree()
   const raycaster = useMemo(() => new THREE.Raycaster(), [])
   const vectors = useMemo(
@@ -23,23 +29,31 @@ export default function Player ({ game, wallsRef, onChange }) {
     []
   )
 
-  // Arrastrar con el ratón gira la cámara
+  useEffect(() => {
+    game.current.motion = motion.current
+  }, [game])
+
+  // Arrastrar gira la cámara. Las diferencias se calculan a mano porque en táctil no hay movementX fiable.
   useEffect(() => {
     const element = gl.domElement
-    let dragging = false
-    const down = () => { dragging = true }
-    const up = () => { dragging = false }
+    let last = null
+    const down = (e) => { last = { id: e.pointerId, x: e.clientX, y: e.clientY } }
+    const up = (e) => { if (last?.id === e.pointerId) last = null }
     const move = (e) => {
-      if (!dragging || game.current.seated) return
-      game.current.yaw -= e.movementX * 0.005
-      game.current.pitch = THREE.MathUtils.clamp(game.current.pitch + e.movementY * 0.004, 0.05, 0.9)
+      if (!last || last.id !== e.pointerId || game.current.seated) return
+      game.current.yaw -= (e.clientX - last.x) * 0.005
+      game.current.pitch = THREE.MathUtils.clamp(game.current.pitch + (e.clientY - last.y) * 0.004, 0.05, 0.9)
+      last.x = e.clientX
+      last.y = e.clientY
     }
     element.addEventListener('pointerdown', down)
     window.addEventListener('pointerup', up)
+    window.addEventListener('pointercancel', up)
     window.addEventListener('pointermove', move)
     return () => {
       element.removeEventListener('pointerdown', down)
       window.removeEventListener('pointerup', up)
+      window.removeEventListener('pointercancel', up)
       window.removeEventListener('pointermove', move)
     }
   }, [gl, game])
@@ -50,50 +64,76 @@ export default function Player ({ game, wallsRef, onChange }) {
     const keys = g.keys
     let moving = false
 
-    if (!g.seated) {
-      const forward = (keys.has('w') || keys.has('arrowup') ? 1 : 0) - (keys.has('s') || keys.has('arrowdown') ? 1 : 0)
-      const strafe = (keys.has('d') ? 1 : 0) - (keys.has('a') ? 1 : 0)
+    if (!g.seated && !g.frozen) {
+      let forward = (keys.has('w') || keys.has('arrowup') ? 1 : 0) - (keys.has('s') || keys.has('arrowdown') ? 1 : 0) + g.stick.y
+      let strafe = (keys.has('d') ? 1 : 0) - (keys.has('a') ? 1 : 0) + g.stick.x
       const turn = (keys.has('arrowright') ? 1 : 0) - (keys.has('arrowleft') ? 1 : 0)
       g.yaw -= turn * TURN_SPEED * delta
 
-      if (forward !== 0 || strafe !== 0) {
+      const length = Math.hypot(forward, strafe)
+      if (length > 0.08) {
+        if (length > 1) {
+          forward /= length
+          strafe /= length
+        }
         const speed = (keys.has('shift') ? RUN_SPEED : WALK_SPEED) * delta
-        const length = Math.hypot(forward, strafe)
-        const dx = ((-Math.sin(g.yaw) * forward + Math.cos(g.yaw) * strafe) / length) * speed
-        const dz = ((-Math.cos(g.yaw) * forward - Math.sin(g.yaw) * strafe) / length) * speed
+        const dx = (-Math.sin(g.yaw) * forward + Math.cos(g.yaw) * strafe) * speed
+        const dz = (-Math.cos(g.yaw) * forward - Math.sin(g.yaw) * strafe) * speed
+        const before = { x: g.x, z: g.z }
         // Los ejes se resuelven por separado para deslizarse a lo largo de las paredes
         if (canStand(g.x + dx, g.z)) g.x += dx
         if (canStand(g.x, g.z + dz)) g.z += dz
         g.facing = Math.atan2(dx, dz)
-        moving = true
+        const walked = Math.hypot(g.x - before.x, g.z - before.z)
+        moving = walked > 0.0005
+        stride.current += walked
+        if (stride.current > 0.85) {
+          stride.current = 0
+          sounds.step()
+        }
       }
 
       const room = roomAt(g.x, g.z)
-      const seat = room === 'sala' ? nearestSeat(g.x, g.z) : null
-      if (room !== g.room || seat?.id !== g.nearSeat?.id) {
+      const sala = salaById(room)
+      let target = null
+      if (sala) {
+        const seat = nearestSeat(room, g.x, g.z)
+        if (seat) target = { type: 'seat', id: seat.id, seat }
+      } else {
+        const npc = nearestStaff(g.x, g.z)
+        if (npc) target = { type: 'npc', id: npc.id, npc }
+      }
+      if (room !== g.room || target?.id !== g.target?.id) {
         g.room = room
-        g.nearSeat = seat
+        g.target = target
         onChange()
       }
     }
+    motion.current.moving = moving
 
-    // Figura
-    const body = figure.current
     // Sentado se ve la sala en primera persona, así que la figura se oculta
+    const body = figure.current
     body.visible = !g.seated
     if (!g.seated) {
-      body.position.set(g.x, moving ? Math.abs(Math.sin(state.clock.elapsedTime * 9)) * 0.05 : 0, g.z)
+      body.position.set(g.x, 0, g.z)
       let diff = g.facing - body.rotation.y
       diff = Math.atan2(Math.sin(diff), Math.cos(diff))
       body.rotation.y += diff * damp(12, delta)
     }
 
-    // Cámara
     const { head, desired, direction, look } = vectors
+    let fov = BASE_FOV
     if (g.seated) {
-      desired.set(g.seat.x - 0.15, 1.3, g.seat.z)
-      // Se mira por debajo del centro para que la pantalla quede por encima del panel de la diapositiva
-      head.set(SCREEN.x, SCREEN.y - 1.7, SCREEN.z)
+      const sala = salaById(g.seat.salaId)
+      const screen = salaPoint(sala, SCREEN.u, 0)
+      desired.set(g.seat.x - sala.side * 0.1, 1.28, g.seat.z)
+      head.set(screen.x, SCREEN.y - 0.2, screen.z)
+      // El campo de visión se cierra hasta que la pantalla ocupa casi toda la vista
+      const distance = desired.distanceTo(head)
+      const aspect = state.size.width / state.size.height
+      const byWidth = 2 * Math.atan(Math.tan(Math.atan(SCREEN.width / 2 / distance / 0.8)) / aspect)
+      const byHeight = 2 * Math.atan(SCREEN.height / 2 / distance / 0.68)
+      fov = THREE.MathUtils.radToDeg(Math.max(byWidth, byHeight))
       camera.position.lerp(desired, damp(3.5, delta))
       look.lerp(head, damp(3.5, delta))
     } else {
@@ -111,22 +151,15 @@ export default function Player ({ game, wallsRef, onChange }) {
       look.lerp(head, damp(14, delta))
     }
     camera.lookAt(look)
+    if (Math.abs(camera.fov - fov) > 0.05) {
+      camera.fov += (fov - camera.fov) * damp(4, delta)
+      camera.updateProjectionMatrix()
+    }
   })
 
   return (
     <group ref={figure}>
-      <mesh position={[0, 0.75, 0]}>
-        <capsuleGeometry args={[0.26, 0.7, 6, 16]} />
-        <meshStandardMaterial color='#f2f2f0' roughness={0.6} />
-      </mesh>
-      <mesh position={[0, 1.52, 0]}>
-        <sphereGeometry args={[0.2, 20, 20]} />
-        <meshStandardMaterial color='#f2f2f0' roughness={0.6} />
-      </mesh>
-      <mesh position={[0, 1.54, 0.16]}>
-        <boxGeometry args={[0.26, 0.08, 0.1]} />
-        <meshStandardMaterial color='#0a0a0b' roughness={0.3} />
-      </mesh>
+      <Person look={PLAYER_LOOK} motion={motion} popcorn={popcorn} drink={drink} />
     </group>
   )
 }

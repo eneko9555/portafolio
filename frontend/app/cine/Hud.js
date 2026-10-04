@@ -1,68 +1,217 @@
-import Link from 'next/link'
-import { SLIDES, PROJECT_LINK } from './world'
+import { useEffect, useRef, useState } from 'react'
+import { roomName } from './world'
+import { SLIDES, CONTACT } from './slides'
 
-const Key = ({ children }) => (
-  <kbd className='rounded-md border border-line bg-white/[0.06] px-1.5 py-0.5 font-mono text-[0.7rem] text-ink'>{children}</kbd>
+// dark es para las teclas dibujadas sobre un botón claro
+const Key = ({ children, dark = false }) => (
+  <kbd className={`rounded-md border px-1.5 py-0.5 font-mono text-[0.7rem] ${dark ? 'border-bg/30 bg-bg/10 text-bg' : 'border-line bg-white/[0.06] text-ink'}`}>
+    {children}
+  </kbd>
 )
 
-// Interfaz sobre la escena: dónde estás, qué puedes hacer y, sentado, la diapositiva actual
-export default function Hud ({ roomName, canSit, seated, slide, onStep, onToggleSeat }) {
-  const current = SLIDES[slide]
+const panel = 'rounded-2xl border border-line bg-bg/80 backdrop-blur-md'
+
+function Intro ({ onStart }) {
+  return (
+    <div className='pointer-events-auto absolute inset-0 grid place-items-center bg-bg/70 p-5 backdrop-blur-sm'>
+      <div className={`${panel} w-full max-w-xl p-8 sm:p-10`}>
+        <p className='label'>Sesión continua</p>
+        <h1 className='mt-3 text-5xl font-semibold tracking-tight'>
+          Cine <span className='font-serif font-normal italic text-muted'>ef</span>
+        </h1>
+        <p className='mt-4 leading-relaxed text-muted'>
+          El trabajo de Eneko Fernández, proyectado en cinco salas. Habla con el personal, pide unas palomitas y
+          siéntate en la sala que quieras: cada pantalla cuenta un proyecto.
+        </p>
+        <ul className='mt-6 grid gap-2.5 text-sm text-muted sm:grid-cols-2'>
+          <li><Key>W</Key> <Key>A</Key> <Key>S</Key> <Key>D</Key> moverse</li>
+          <li><Key>←</Key> <Key>→</Key> o arrastrar: girar</li>
+          <li><Key>Mayús</Key> correr</li>
+          <li><Key>E</Key> hablar y sentarse</li>
+          <li><Key>1</Key> comer palomitas</li>
+          <li><Key>2</Key> beber</li>
+        </ul>
+        <div className='mt-8 flex flex-wrap gap-3'>
+          <button type='button' onClick={() => onStart(true)} className='btn-primary'>Entrar con sonido</button>
+          <button type='button' onClick={() => onStart(false)} className='btn-ghost'>Entrar en silencio</button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Palanca táctil: solo aparece en pantallas sin ratón
+function Joystick ({ game }) {
+  const base = useRef()
+  const [knob, setKnob] = useState({ x: 0, y: 0 })
+
+  const update = (e) => {
+    const box = base.current.getBoundingClientRect()
+    const radius = box.width / 2
+    let x = (e.clientX - box.left - radius) / radius
+    let y = (e.clientY - box.top - radius) / radius
+    const length = Math.hypot(x, y)
+    if (length > 1) {
+      x /= length
+      y /= length
+    }
+    game.current.stick = { x, y: -y }
+    setKnob({ x, y })
+  }
+  const release = () => {
+    game.current.stick = { x: 0, y: 0 }
+    setKnob({ x: 0, y: 0 })
+  }
+
+  return (
+    <div
+      ref={base}
+      className='pointer-events-auto relative h-28 w-28 touch-none rounded-full border border-line bg-bg/60 backdrop-blur-md'
+      onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); update(e) }}
+      onPointerMove={(e) => e.currentTarget.hasPointerCapture(e.pointerId) && update(e)}
+      onPointerUp={release}
+      onPointerCancel={release}
+    >
+      <div
+        className='absolute left-1/2 top-1/2 h-11 w-11 rounded-full bg-ink/80'
+        style={{ transform: `translate(calc(-50% + ${knob.x * 34}px), calc(-50% + ${knob.y * 34}px))` }}
+      />
+    </div>
+  )
+}
+
+function CopyEmail () {
+  const [copied, setCopied] = useState(false)
+  async function copy () {
+    try {
+      await navigator.clipboard.writeText(CONTACT.email)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      setCopied(false)
+    }
+  }
+  return (
+    <button type='button' onClick={copy} className='btn-ghost'>
+      {copied ? 'Email copiado' : 'Copiar email'}
+    </button>
+  )
+}
+
+// Interfaz sobre la escena: dónde estás, qué puedes hacer, con quién hablas y qué llevas encima
+export default function Hud ({ started, onStart, room, target, seatedSala, slide, items, dialog, toast, sound, game, onInteract, onStep, onAdvance, onChoose, onConsume, onToggleSound }) {
+  const [touch, setTouch] = useState(false)
+  useEffect(() => {
+    setTouch(window.matchMedia('(pointer: coarse)').matches)
+  }, [])
+
+  if (!started) return <Intro onStart={onStart} />
+
+  const page = dialog?.pages[dialog.index]
+  const total = seatedSala ? SLIDES[seatedSala].length : 0
 
   return (
     <div className='pointer-events-none absolute inset-0 flex flex-col justify-between p-4 sm:p-6'>
       <div className='flex items-start justify-between gap-4'>
-        <Link href='/' className='btn-ghost pointer-events-auto bg-bg/70 backdrop-blur-md'>
-          <span aria-hidden='true'>←</span> Volver al portfolio
-        </Link>
+        <button type='button' onClick={onToggleSound} aria-pressed={sound} className='btn-ghost pointer-events-auto bg-bg/70 backdrop-blur-md'>
+          Sonido: {sound ? 'sí' : 'no'}
+        </button>
         <p className='label rounded-full border border-line bg-bg/70 px-4 py-2.5 backdrop-blur-md' aria-live='polite'>
-          {roomName}
+          {roomName(room)}
         </p>
       </div>
 
-      {seated
-        ? (
-          <div className='pointer-events-auto mx-auto w-full max-w-3xl rounded-2xl border border-line bg-bg/80 p-5 backdrop-blur-md'>
-            <div className='flex items-start justify-between gap-6'>
-              <div className='min-w-0'>
-                <p className='label'>
-                  {String(slide + 1).padStart(2, '0')} / {String(SLIDES.length).padStart(2, '0')}
-                </p>
-                <h2 className='mt-2 text-xl font-semibold tracking-tight'>{current.title}</h2>
-                <p className='mt-1 text-sm leading-relaxed text-muted'>{current.text}</p>
-              </div>
-              <div className='flex shrink-0 gap-2'>
-                <button type='button' onClick={() => onStep(-1)} aria-label='Diapositiva anterior' className='btn-ghost h-10 w-10 justify-center p-0'>
-                  ←
-                </button>
-                <button type='button' onClick={() => onStep(1)} aria-label='Diapositiva siguiente' className='btn-ghost h-10 w-10 justify-center p-0'>
-                  →
-                </button>
-              </div>
-            </div>
-            <div className='mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4 text-sm text-muted'>
-              <p>
-                <Key>←</Key> <Key>→</Key> pasar · <Key>E</Key> levantarse
-              </p>
-              <div className='flex gap-2'>
-                <Link href={PROJECT_LINK} className='btn-ghost'>Ver caso completo</Link>
-                <button type='button' onClick={onToggleSeat} className='btn-primary'>Levantarse</button>
-              </div>
-            </div>
-          </div>
-          )
-        : (
-          <div className='flex items-end justify-between gap-4'>
-            <p className='hidden rounded-xl border border-line bg-bg/70 px-4 py-3 text-sm text-muted backdrop-blur-md sm:block'>
-              <Key>W</Key> <Key>A</Key> <Key>S</Key> <Key>D</Key> moverse · <Key>←</Key> <Key>→</Key> o arrastrar para girar · <Key>Mayús</Key> correr
+      <div className='flex flex-col items-center gap-3'>
+        {toast && (
+          <p key={toast.id} role='status' className={`${panel} rise px-5 py-3 text-sm`}>
+            {toast.text}
+          </p>
+        )}
+
+        {dialog && (
+          <div className={`${panel} pointer-events-auto w-full max-w-2xl p-5`}>
+            <p className='label'>
+              <span className='text-ink'>{dialog.npc.name}</span> · {dialog.npc.role}
             </p>
-            {canSit && (
-              <button type='button' onClick={onToggleSeat} className='btn-primary pointer-events-auto mx-auto sm:mx-0'>
-                <Key>E</Key> Sentarse
+            <p className='mt-3 text-lg leading-relaxed' aria-live='polite'>{page.text}</p>
+            {page.choices
+              ? (
+                <div className='mt-4 flex flex-wrap gap-2'>
+                  {page.choices.map((choice, i) => (
+                    <button key={choice.label} type='button' onClick={() => onChoose(i)} className='btn-ghost'>
+                      <Key>{i + 1}</Key> {choice.label}
+                    </button>
+                  ))}
+                </div>
+                )
+              : (
+                <div className='mt-4 flex items-center justify-between text-sm text-muted'>
+                  <span>{dialog.index + 1} / {dialog.pages.length}</span>
+                  <button type='button' onClick={onAdvance} className='btn-primary'>
+                    <Key dark>E</Key> {dialog.index + 1 >= dialog.pages.length ? 'Cerrar' : 'Seguir'}
+                  </button>
+                </div>
+                )}
+          </div>
+        )}
+
+        {!dialog && seatedSala && (
+          <div className={`${panel} pointer-events-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-3 px-4 py-3`}>
+            <div className='flex items-center gap-2'>
+              <button type='button' onClick={() => onStep(-1)} aria-label='Diapositiva anterior' className='btn-ghost h-10 w-10 justify-center p-0'>←</button>
+              <span className='w-16 text-center font-mono text-xs text-muted'>
+                {String(slide + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+              </span>
+              <button type='button' onClick={() => onStep(1)} aria-label='Diapositiva siguiente' className='btn-ghost h-10 w-10 justify-center p-0'>→</button>
+            </div>
+            {seatedSala === 'contacto' && (
+              <div className='flex flex-wrap gap-2'>
+                <CopyEmail />
+                <a href={CONTACT.linkedin} target='_blank' rel='noreferrer' className='btn-ghost'>LinkedIn ↗</a>
+                <a href={CONTACT.github} target='_blank' rel='noreferrer' className='btn-ghost'>GitHub ↗</a>
+              </div>
+            )}
+            <button type='button' onClick={onInteract} className='btn-primary'>
+              <Key dark>E</Key> Levantarse
+            </button>
+          </div>
+        )}
+
+        {!dialog && !seatedSala && (
+          <div className='flex w-full items-end justify-between gap-4'>
+            {touch
+              ? <Joystick game={game} />
+              : (
+                <p className='hidden rounded-xl border border-line bg-bg/70 px-4 py-3 text-sm text-muted backdrop-blur-md lg:block'>
+                  <Key>W</Key> <Key>A</Key> <Key>S</Key> <Key>D</Key> moverse · <Key>←</Key> <Key>→</Key> girar · <Key>Mayús</Key> correr
+                </p>
+                )}
+            {target && (
+              <button type='button' onClick={onInteract} className='btn-primary pointer-events-auto mx-auto'>
+                <Key dark>E</Key> {target.label}
+              </button>
+            )}
+            <span className='hidden lg:block' />
+          </div>
+        )}
+
+        {/* Lo que llevas encima */}
+        {(items.ticket || items.popcorn > 0 || items.drink > 0) && !dialog && (
+          <div className='pointer-events-auto flex flex-wrap justify-center gap-2 text-sm'>
+            {items.ticket && <span className='chip bg-bg/70 backdrop-blur-md'>Entrada</span>}
+            {items.popcorn > 0 && (
+              <button type='button' onClick={() => onConsume('popcorn')} className='chip bg-bg/70 text-ink backdrop-blur-md'>
+                <Key>1</Key> Palomitas × {items.popcorn}
+              </button>
+            )}
+            {items.drink > 0 && (
+              <button type='button' onClick={() => onConsume('drink')} className='chip bg-bg/70 text-ink backdrop-blur-md'>
+                <Key>2</Key> Refresco × {items.drink}
               </button>
             )}
           </div>
-          )}
+        )}
+      </div>
     </div>
   )
 }

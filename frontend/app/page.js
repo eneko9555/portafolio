@@ -27,6 +27,9 @@ export default function Home () {
               Ver proyectos <span aria-hidden='true'>↓</span>
             </Link>
             <Link href='/about' className='btn-ghost'>Sobre mí</Link>
+            <Link href='/cine' className='btn-ghost'>
+              Entrar al cine 3D <span aria-hidden='true'>→</span>
+            </Link>
           </div>
 
           <dl className='rise rise-4 mt-20 grid gap-8 border-t border-line pt-8 sm:grid-cols-3'>
