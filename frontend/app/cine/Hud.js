@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { roomName } from './world'
+import ContactForm from '../components/ContactForm'
+import { SALAS, roomName } from './world'
 import { SLIDES, CONTACT } from './slides'
 
 // dark es para las teclas dibujadas sobre un botón claro
@@ -70,12 +71,52 @@ function CopyEmail () {
   )
 }
 
+// Entrada con un sello por sala; al completarla se convierte en pase de estreno
+function Ticket ({ seen, pass }) {
+  const complete = seen.length === SALAS.length
+  const hint = pass
+    ? 'Barra libre de palomitas y refresco'
+    : complete
+      ? 'Completa: recoge tu premio con Mikel'
+      : 'Sella las 5 salas y hay premio'
+  return (
+    <div className={`rounded-xl border bg-bg/70 px-3.5 py-2.5 backdrop-blur-md ${pass ? 'border-[#ffd98a]/70' : 'border-line'}`}>
+      <p className='label flex justify-between gap-4'>
+        <span className={pass ? 'text-[#ffd98a]' : ''}>{pass ? 'Pase de estreno' : 'Entrada'}</span>
+        <span>{seen.length} / {SALAS.length}</span>
+      </p>
+      <ol className='mt-2 flex gap-1.5' aria-label='Salas selladas'>
+        {SALAS.map((sala) => {
+          const stamped = seen.includes(sala.id)
+          return (
+            <li
+              key={sala.id}
+              title={`Sala ${sala.number} · ${sala.title}${stamped ? ' · sellada' : ''}`}
+              className={`flex h-7 w-7 items-center justify-center rounded-full border font-mono text-[0.7rem] ${stamped ? 'border-transparent font-semibold text-bg' : 'border-line text-muted'}`}
+              style={stamped ? { backgroundColor: sala.accent } : undefined}
+            >
+              {sala.number}
+            </li>
+          )
+        })}
+      </ol>
+      <p className={`mt-2 text-xs ${complete ? 'text-[#ffd98a]' : 'text-muted'}`}>{hint}</p>
+    </div>
+  )
+}
+
 // Interfaz sobre la escena: dónde estás, qué puedes hacer, con quién hablas y qué llevas encima
 export default function Hud ({ room, target, seatedSala, slide, items, dialog, toast, sound, game, onInteract, onStep, onAdvance, onChoose, onConsume, onToggleSound }) {
   const [touch, setTouch] = useState(false)
   useEffect(() => {
     setTouch(window.matchMedia('(pointer: coarse)').matches)
   }, [])
+
+  // El formulario de la sala de contacto se cierra al levantarse
+  const [writing, setWriting] = useState(false)
+  useEffect(() => {
+    if (seatedSala !== 'contacto') setWriting(false)
+  }, [seatedSala])
 
   const page = dialog?.pages[dialog.index]
   const total = seatedSala ? SLIDES[seatedSala].length : 0
@@ -91,9 +132,12 @@ export default function Hud ({ room, target, seatedSala, slide, items, dialog, t
             Efectos: {sound ? 'sí' : 'no'}
           </button>
         </div>
-        <p className='label rounded-full border border-line bg-bg/70 px-4 py-2.5 backdrop-blur-md' aria-live='polite'>
-          {roomName(room)}
-        </p>
+        <div className='flex flex-col items-end gap-2'>
+          <p className='label rounded-full border border-line bg-bg/70 px-4 py-2.5 backdrop-blur-md' aria-live='polite'>
+            {roomName(room)}
+          </p>
+          {items.ticket && <Ticket seen={items.seen} pass={items.pass} />}
+        </div>
       </div>
 
       <div className='flex flex-col items-center gap-3'>
@@ -130,8 +174,21 @@ export default function Hud ({ room, target, seatedSala, slide, items, dialog, t
           </div>
         )}
 
+        {!dialog && writing && (
+          <div
+            className={`${panel} pointer-events-auto w-full max-w-3xl select-text p-5`}
+            onKeyDown={(e) => e.key === 'Escape' && setWriting(false)}
+          >
+            <div className='mb-4 flex items-center justify-between gap-4'>
+              <p className='label'>Escribe a Eneko desde la butaca</p>
+              <button type='button' onClick={() => setWriting(false)} className='link text-sm text-muted'>Cerrar</button>
+            </div>
+            <ContactForm compact />
+          </div>
+        )}
+
         {!dialog && seatedSala && (
-          <div className={`${panel} pointer-events-auto flex w-full max-w-3xl flex-wrap items-center justify-between gap-3 px-4 py-3`}>
+          <div className={`${panel} pointer-events-auto flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 ${seatedSala === 'contacto' ? 'max-w-4xl' : 'max-w-3xl'}`}>
             <div className='flex items-center gap-2'>
               <button type='button' onClick={() => onStep(-1)} aria-label='Diapositiva anterior' className='btn-ghost h-10 w-10 justify-center p-0'>←</button>
               <span className='w-16 text-center font-mono text-xs text-muted'>
@@ -141,6 +198,9 @@ export default function Hud ({ room, target, seatedSala, slide, items, dialog, t
             </div>
             {seatedSala === 'contacto' && (
               <div className='flex flex-wrap gap-2'>
+                <button type='button' onClick={() => setWriting((open) => !open)} aria-expanded={writing} className='btn-ghost'>
+                  Escribir un mensaje
+                </button>
                 <CopyEmail />
                 <a href={CONTACT.linkedin} target='_blank' rel='noreferrer' className='btn-ghost'>LinkedIn ↗</a>
                 <a href={CONTACT.github} target='_blank' rel='noreferrer' className='btn-ghost'>GitHub ↗</a>
@@ -173,9 +233,8 @@ export default function Hud ({ room, target, seatedSala, slide, items, dialog, t
         )}
 
         {/* Lo que llevas encima */}
-        {(items.ticket || items.popcorn > 0 || items.drink > 0) && !dialog && (
+        {(items.popcorn > 0 || items.drink > 0) && !dialog && !writing && (
           <div className='pointer-events-auto flex flex-wrap justify-center gap-2 text-sm'>
-            {items.ticket && <span className='chip bg-bg/70 backdrop-blur-md'>Entrada</span>}
             {items.popcorn > 0 && (
               <button type='button' onClick={() => onConsume('popcorn')} className='chip bg-bg/70 text-ink backdrop-blur-md'>
                 <Key>1</Key> Palomitas × {items.popcorn}

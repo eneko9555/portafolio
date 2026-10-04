@@ -6,7 +6,7 @@ import People from './People'
 import Player from './Player'
 import CinemaScreen from './CinemaScreen'
 import Hud from './Hud'
-import { SPAWN, SALAS, salaById, salaPoint } from './world'
+import { SPAWN, SALAS, STAFF, salaById, salaPoint } from './world'
 import { SLIDES } from './slides'
 import { buildDialog } from './dialogs'
 import { setSound, sounds } from './audio'
@@ -45,11 +45,16 @@ export default function Cine () {
     seated: false,
     seat: null,
     frozen: false,
-    motion: null
+    motion: null,
+    ticket: false,
+    talkingTo: null,
+    halted: false,
+    light: 1
   })
   const [view, setView] = useState({ room: 'lobby', target: null, seated: false, lightSala: 'askesis' })
   const [slides, setSlides] = useState(() => Object.fromEntries(SALAS.map((sala) => [sala.id, 0])))
-  const [items, setItems] = useState({ popcorn: 0, drink: 0, ticket: false })
+  // seen son las salas ya selladas en la entrada; pass es el premio por completarla
+  const [items, setItems] = useState({ popcorn: 0, drink: 0, ticket: false, pass: false, seen: [] })
   const [dialog, setDialog] = useState(null)
   const [toast, setToast] = useState(null)
   const [sound, setSoundOn] = useState(true)
@@ -58,11 +63,15 @@ export default function Cine () {
   itemsRef.current = items
   const dialogRef = useRef(dialog)
   dialogRef.current = dialog
+  const slidesRef = useRef(slides)
+  slidesRef.current = slides
+  game.current.ticket = items.ticket
+  const gateQuietUntil = useRef(0)
 
   const notify = useCallback((text) => setToast({ text, id: Date.now() }), [])
   useEffect(() => {
     if (!toast) return
-    const timer = setTimeout(() => setToast(null), 2800)
+    const timer = setTimeout(() => setToast(null), Math.max(2800, toast.text.length * 60))
     return () => clearTimeout(timer)
   }, [toast])
 
@@ -81,14 +90,34 @@ export default function Cine () {
     const page = pages[index]
     if (page.changes) setItems((current) => ({ ...current, ...page.changes }))
     if (page.changes?.ticket) sounds.buy()
+    if (page.changes?.pass) sounds.fanfare()
     sounds.talk()
     setDialog({ npc, pages, index })
   }, [])
 
   const closeDialog = useCallback(() => {
     game.current.frozen = false
+    game.current.talkingTo = null
+    gateQuietUntil.current = performance.now() + 2500
     setDialog(null)
   }, [])
+
+  const talkTo = useCallback((npc) => {
+    const g = game.current
+    g.frozen = true
+    g.keys.clear()
+    // Con quién hablas, para que se gire hacia ti; halted es el alto del vigilante a quien no lleva entrada
+    g.talkingTo = npc.id
+    g.halted = npc.guard && !itemsRef.current.ticket
+    showPage(buildDialog(npc, itemsRef.current), 0, npc)
+  }, [showPage])
+
+  // El vigilante te para si intentas entrar al pasillo sin entrada
+  const stopAtGate = useCallback(() => {
+    if (dialogRef.current || performance.now() < gateQuietUntil.current) return
+    sounds.deny()
+    talkTo(STAFF.find((npc) => npc.id === 'acomodador'))
+  }, [talkTo])
 
   const advance = useCallback(() => {
     const current = dialogRef.current
@@ -123,16 +152,24 @@ export default function Cine () {
       g.seat = g.target.seat
       g.keys.clear()
       sounds.sit()
+      sounds.lights()
+      // Sentarse en una sala sella la entrada
+      const sala = salaById(g.seat.salaId)
+      if (!itemsRef.current.seen.includes(sala.id)) {
+        const seen = [...itemsRef.current.seen, sala.id]
+        setItems((current) => ({ ...current, ticket: true, seen }))
+        sounds.stamp()
+        notify(seen.length === SALAS.length
+          ? 'Entrada completa: has visto las cinco salas. Habla con Mikel, el vigilante, y recoge tu premio.'
+          : `Sala ${sala.number} sellada · ${seen.length} de ${SALAS.length}`)
+      }
     } else if (g.target?.type === 'npc') {
-      g.frozen = true
-      g.keys.clear()
-      showPage(buildDialog(g.target.npc, itemsRef.current), 0, g.target.npc)
-      return
+      return talkTo(g.target.npc)
     } else {
       return
     }
     sync()
-  }, [advance, showPage, sync])
+  }, [advance, talkTo, notify, sync])
 
   const step = useCallback((delta) => {
     const g = game.current
@@ -222,26 +259,27 @@ export default function Cine () {
     window.__cine = {
       game: game.current,
       get state () {
-        const { x, z, room, seated, target } = game.current
-        return { x, z, room, seated, target: target?.id ?? null, slides, items, dialog: dialog ? dialog.pages[dialog.index].text : null }
+        const { x, z, room, seated, target, light } = game.current
+        const current = dialogRef.current
+        return { x, z, room, seated, light, target: target?.id ?? null, slides: slidesRef.current, items: itemsRef.current, dialog: current ? current.pages[current.index].text : null }
       }
     }
     return () => {
       delete window.__cine
     }
-  }, [slides, items, dialog])
+  }, [])
 
   const seatedSala = view.seated ? game.current.seat?.salaId : null
 
   return (
     <div className='fixed inset-0 z-50 select-none bg-bg' onContextMenu={(e) => e.preventDefault()}>
       <Canvas dpr={[1, 1.75]} camera={{ fov: 55, near: 0.1, far: 90, position: [SPAWN.x, 2.8, SPAWN.z + 3] }}>
-        <Scene wallsRef={wallsRef} lightSala={view.lightSala} />
+        <Scene wallsRef={wallsRef} lightSala={view.lightSala} dim={view.seated} gateOpen={items.ticket} game={game} />
         {SALAS.map((sala) => (
           <CinemaScreen key={sala.id} sala={sala} slide={slides[sala.id]} active={view.room === sala.id} />
         ))}
         <People game={game} />
-        <Player game={game} wallsRef={wallsRef} onChange={sync} popcorn={items.popcorn > 0} drink={items.drink > 0} />
+        <Player game={game} wallsRef={wallsRef} onChange={sync} onGate={stopAtGate} popcorn={items.popcorn > 0} drink={items.drink > 0} />
       </Canvas>
       <Hud
         room={view.room}

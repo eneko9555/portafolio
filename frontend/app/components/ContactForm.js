@@ -1,7 +1,8 @@
 'use client'
 import { useState } from 'react'
 
-const ContactForm = () => {
+// compact pone nombre y email en una fila y acorta el mensaje, para sitios con poco alto como el cine 3D
+const ContactForm = ({ compact = false }) => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [message, setMessage] = useState('')
@@ -28,8 +29,10 @@ const ContactForm = () => {
     }
   }
 
+  const wide = compact ? 'sm:col-span-2' : ''
+
   return (
-    <form onSubmit={handleSubmit} className='space-y-4'>
+    <form onSubmit={handleSubmit} className={compact ? 'grid gap-4 sm:grid-cols-2' : 'space-y-4'}>
       <div>
         <label htmlFor='name' className='label'>Nombre</label>
         <input
@@ -54,20 +57,22 @@ const ContactForm = () => {
           onChange={(e) => setEmail(e.target.value)}
         />
       </div>
-      <div>
+      <div className={wide}>
         <label htmlFor='message' className='label'>Mensaje</label>
         <textarea
           id='message'
           required
-          className='field mt-2 min-h-[10rem]'
+          className={`field mt-2 ${compact ? 'min-h-[6rem]' : 'min-h-[10rem]'}`}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
       </div>
-      <button type='submit' disabled={status === 'loading'} className='btn-primary disabled:opacity-60'>
-        {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}
-      </button>
-      <p aria-live='polite' className='text-sm'>
+      <div className={wide}>
+        <button type='submit' disabled={status === 'loading'} className='btn-primary disabled:opacity-60'>
+          {status === 'loading' ? 'Enviando…' : 'Enviar mensaje'}
+        </button>
+      </div>
+      <p aria-live='polite' className={`text-sm ${wide}`}>
         {status === 'success' && (
           <span className='text-emerald-400'>Mensaje enviado. Te responderé lo antes posible.</span>
         )}

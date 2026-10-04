@@ -15,10 +15,10 @@ export const metadata = {
     template: '%s | Eneko Fernández'
   },
   description:
-    'Eneko Fernández, desarrollador full stack en Butler Scientifics y co-fundador de Askesis. Productos web construidos de principio a fin: Askesis, Chronia Timeline y OurMap.',
+    'Eneko Fernández, desarrollador full stack en Butler Scientifics y cofundador de Askesis. Productos web construidos de principio a fin: Askesis, Chronia Timeline y OurMap.',
   openGraph: {
     title: 'Eneko Fernández | Desarrollador full stack',
-    description: 'Desarrollador full stack y co-fundador de Askesis. Productos web construidos de principio a fin.',
+    description: 'Desarrollador full stack y cofundador de Askesis. Productos web construidos de principio a fin.',
     type: 'website',
     locale: 'es_ES',
     images: [{ url: '/og/home.jpg', width: 1200, height: 630 }]

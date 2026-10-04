@@ -5,7 +5,7 @@ export const profile = {
   summary:
     'Desarrollador full stack con experiencia en el ciclo completo de desarrollo de software, desde la conceptualización y el diseño UI/UX hasta la implementación y el despliegue en producción.',
   about: [
-    'Trabajo como desarrollador full stack en Butler Scientifics, donde llevo soluciones de software a medida desde la toma de requisitos con el cliente hasta el despliegue. En paralelo soy co-fundador de Askesis, una plataforma SaaS para entrenadores personales que desarrollo desde 2023.',
+    'Trabajo como desarrollador full stack en Butler Scientifics, donde llevo soluciones de software a medida desde la toma de requisitos con el cliente hasta el despliegue. En paralelo soy cofundador de Askesis, una plataforma SaaS para entrenadores personales que desarrollo desde 2023.',
     'Me muevo con comodidad en todo el recorrido de un producto: el modelo de datos, la API, la interfaz y la infraestructura. Vengo de una formación en sistemas y redes, y eso se nota en cómo pienso el despliegue y la seguridad.',
     'Sigo formándome: curso el Grado Superior en Desarrollo de Aplicaciones Web y un programa avanzado de IA aplicada a la programación.'
   ]
@@ -34,10 +34,10 @@ export const experience = [
   {
     company: 'Askesis',
     href: 'https://askesis.app/',
-    role: 'Co-fundador y desarrollador full stack',
+    role: 'Cofundador y desarrollador full stack',
     period: 'Jun 2023 — actualidad',
     summary:
-      'Co-fundador y responsable del desarrollo de una plataforma SaaS de entrenamiento (PWA) con más de 600 usuarios activos en el mercado internacional.',
+      'Cofundador y responsable del desarrollo de una plataforma SaaS de entrenamiento (PWA) con más de 600 usuarios activos en el mercado internacional.',
     points: [
       'Diseño y mantenimiento de la arquitectura sobre Next.js, MongoDB y Node.js, con pagos mediante Stripe y comunicación bidireccional con Socket.IO.',
       'Gestión de la infraestructura en la nube con AWS y Cloudflare: seguridad, alta disponibilidad y tiempos de latencia globales.'
@@ -49,7 +49,7 @@ export const education = [
   {
     title: 'Programa Avanzado en IA para Programar',
     school: 'UNIR',
-    period: 'Feb 2026 — en curso',
+    period: 'Feb 2026 — Jul 2026',
     note: 'IA aplicada a la programación, orientada a la productividad y a soluciones reales.'
   },
   {

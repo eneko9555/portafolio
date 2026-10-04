@@ -6,8 +6,7 @@ const number = (n) => String(n).padStart(2, '0')
 
 function projectSlides (project) {
   return [
-    { type: 'title', title: project.name, text: project.tagline, stat: `${project.highlight.value} ${project.highlight.label}`, note: `${project.kind} · ${project.period}` },
-    { type: 'text', eyebrow: 'Contexto', title: 'Qué problema resuelve', paragraphs: project.context },
+    { type: 'title', title: project.name, text: project.tagline, stat: `${project.highlight.value} ${project.highlight.label}`, note: `${project.kind} · ${project.period}` },    { type: 'text', eyebrow: 'Contexto', title: 'Qué problema resuelve', paragraphs: project.context },
     { type: 'list', eyebrow: 'Mi rol', title: project.role, items: project.roleDetail.map((text) => ({ text })) },
     ...project.features.map((feature, i) => ({
       type: 'feature',
@@ -78,7 +77,7 @@ const contactSlides = [
       { title: 'Ubicación', text: profile.location }
     ]
   },
-  { type: 'end', title: 'Gracias por venir', text: 'Los botones de abajo copian el email o abren mis perfiles', note: contact.email }
+  { type: 'end', title: 'Gracias por venir', text: 'Abajo puedes escribirme sin levantarte, copiar el email o abrir mis perfiles', note: contact.email }
 ]
 
 export const SLIDES = {

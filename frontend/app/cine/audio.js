@@ -1,4 +1,4 @@
-// Efectos de sonido generados con Web Audio, sin archivos: pasos, butaca, diapositiva, diálogo, palomitas y bebida
+// Efectos de sonido generados con Web Audio, sin archivos: pasos, butaca, diapositiva, diálogo, palomitas, bebida, sello y luces
 let context = null
 let enabled = false
 
@@ -61,5 +61,12 @@ export const sounds = {
   talk: () => tone({ frequency: 440 + Math.random() * 80, duration: 0.09, volume: 0.05 }),
   buy: () => [660, 880].forEach((frequency, i) => setTimeout(() => tone({ frequency, duration: 0.14, volume: 0.06 }), i * 110)),
   crunch: () => [0, 90, 190].forEach((delay) => setTimeout(() => burst({ frequency: 2400 + Math.random() * 900, duration: 0.07, volume: 0.35, q: 2.5 }), delay)),
-  sip: () => burst({ frequency: 900, duration: 0.5, volume: 0.12, q: 6 })
+  sip: () => burst({ frequency: 900, duration: 0.5, volume: 0.12, q: 6 }),
+  stamp: () => {
+    burst({ frequency: 220, duration: 0.12, volume: 0.9, type: 'lowpass' })
+    setTimeout(() => tone({ frequency: 990, duration: 0.18, volume: 0.05 }), 90)
+  },
+  fanfare: () => [523, 659, 784, 1047].forEach((frequency, i) => setTimeout(() => tone({ frequency, duration: 0.22, volume: 0.06 }), i * 120)),
+  deny: () => [330, 247].forEach((frequency, i) => setTimeout(() => tone({ frequency, duration: 0.16, volume: 0.06 }), i * 140)),
+  lights: () => burst({ frequency: 320, duration: 0.9, volume: 0.22, type: 'lowpass' })
 }

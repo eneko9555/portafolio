@@ -7,7 +7,7 @@ export const featuredProjects = [
     kind: 'Plataforma SaaS',
     accent: '#e0457f',
     period: '2023 — actualidad',
-    role: 'Co-fundador y desarrollador full stack',
+    role: 'Cofundador y desarrollador full stack',
     highlight: { value: '600+', label: 'usuarios activos' },
     tagline: 'La plataforma con la que los entrenadores personales llevan a sus clientes y su negocio.',
     summary:
@@ -35,7 +35,7 @@ export const featuredProjects = [
       'Askesis reúne todo ese trabajo en una sola aplicación pensada para entrenamiento de fuerza. El entrenador programa, revisa y cobra desde un panel web, y cada cliente lo recibe en una app instalable que lleva el nombre, el logo y los colores de su entrenador.'
     ],
     roleDetail: [
-      'Soy co-fundador de Askesis y el responsable de su desarrollo desde su inicio en 2023.',
+      'Soy cofundador de Askesis y el responsable de su desarrollo desde su inicio en 2023.',
       'Diseño y mantengo la arquitectura sobre Next.js, Node.js y MongoDB, la integración de pagos con Stripe y la comunicación en tiempo real con Socket.IO.',
       'También llevo la infraestructura en la nube con AWS y Cloudflare: seguridad, disponibilidad del servicio y tiempos de respuesta.'
     ],

@@ -1,10 +1,11 @@
 'use client'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
+import { useFrame } from '@react-three/fiber'
 import { flat } from './Person'
 import { featuredProjects } from '../data/projects'
 import {
-  LOBBY, CORRIDOR, SALA, SALAS, SCREEN, HALF, WALL, SEATS,
+  LOBBY, CORRIDOR, SALA, SALAS, SCREEN, HALF, WALL, SEATS, GATE_Z,
   TICKET_DESK, POPCORN_BAR, COLUMNS, BENCHES, PLANTS, salaPoint, salaById
 } from './world'
 import { makePosterTexture, makeSignTexture, makeBoardTexture, makeCarpetTexture, makeStripesTexture, makeCurtainTexture } from './textures'
@@ -384,31 +385,83 @@ function Sala ({ sala }) {
   )
 }
 
-// Geometría fija del cine. wallsRef agrupa lo que frena a la cámara; lightSala es la sala que se ilumina.
-export default function Scene ({ wallsRef, lightSala }) {
+// Control de entradas en la boca del pasillo: dos postes y una línea en el suelo, roja hasta que tienes entrada
+function Gate ({ open }) {
+  const color = open ? '#59d98e' : '#ff4d5e'
+  return (
+    <>
+      <Neon position={[0, 0.02, GATE_Z]} size={[HALF * 2 - 0.3, 0.03, 0.09]} color={color} />
+      {[-1, 1].map((side) => (
+        <group key={side} position={[side * (HALF - 0.12), 0, GATE_Z]}>
+          <Box position={[0, 0.55, 0]} size={[0.12, 1.1, 0.12]} color='#b8894a' />
+          <Neon position={[0, 1.16, 0]} size={[0.14, 0.12, 0.14]} color={color} />
+        </group>
+      ))}
+    </>
+  )
+}
+
+const HOUSE_LIGHTS = [
+  { position: [-6, 5.2, 5.5], intensity: 75, distance: 20, color: '#ffd9b8' },
+  { position: [6, 5.2, 5.5], intensity: 75, distance: 20, color: '#ffd9b8' },
+  { position: [-6, 5.2, 14.5], intensity: 75, distance: 20, color: '#ffd9b8' },
+  { position: [6, 5.2, 14.5], intensity: 75, distance: 20, color: '#ffd9b8' },
+  { position: [8.4, 3.2, 9], intensity: 45, distance: 11, color: '#ffcf7a' },
+  { position: [-8.4, 3.2, 8], intensity: 35, distance: 11, color: '#ff8fb8' },
+  { position: [0, 3, -9], intensity: 55, distance: 24, color: '#ffd9b8' },
+  { position: [0, 3, -29], intensity: 55, distance: 24, color: '#ffd9b8' }
+]
+const SKY_LIGHT = 1.25
+const AMBIENT_LIGHT = 0.25
+const SALA_LIGHT = 16
+const SCREEN_LIGHT = 60
+const DARK = 0.1
+
+// Geometría fija del cine. wallsRef agrupa lo que frena a la cámara; lightSala es la sala que se ilumina;
+// dim apaga las luces de sala mientras estás sentado y gateOpen indica si ya tienes entrada.
+export default function Scene ({ wallsRef, lightSala, dim, gateOpen, game }) {
   const wallMaterial = flat('#2c242b')
   const ceilingMaterial = flat('#0d0d10')
   const sala = salaById(lightSala) ?? SALAS[0]
   const near = salaPoint(sala, 5.5, 0)
   const front = salaPoint(sala, 12.6, 0)
 
+  const sky = useRef()
+  const ambient = useRef()
+  const house = useRef()
+  const salaLight = useRef()
+  const screenLight = useRef()
+  const level = useRef(1)
+
+  // Las luces se apagan poco a poco al sentarse y vuelven al levantarse. La pantalla no depende de ellas:
+  // se ve igual, y de su resplandor sobre las primeras filas queda solo una parte.
+  useFrame((_, delta) => {
+    const target = dim ? DARK : 1
+    if (Math.abs(level.current - target) < 0.001) return
+    level.current += (target - level.current) * Math.min(1, delta * 2.4)
+    sky.current.intensity = SKY_LIGHT * level.current
+    ambient.current.intensity = AMBIENT_LIGHT * level.current
+    salaLight.current.intensity = SALA_LIGHT * level.current
+    screenLight.current.intensity = SCREEN_LIGHT * (0.3 + 0.7 * level.current)
+    house.current.children.forEach((light, i) => { light.intensity = HOUSE_LIGHTS[i].intensity * level.current })
+    game.current.light = level.current
+  })
+
   return (
     <>
       <color attach='background' args={['#050506']} />
       <fog attach='fog' args={['#050506', 22, 52]} />
 
-      <hemisphereLight args={['#ffe9d6', '#2a1a22', 1.25]} />
-      <ambientLight intensity={0.25} />
-      <pointLight position={[-6, 5.2, 5.5]} intensity={75} distance={20} color='#ffd9b8' />
-      <pointLight position={[6, 5.2, 5.5]} intensity={75} distance={20} color='#ffd9b8' />
-      <pointLight position={[-6, 5.2, 14.5]} intensity={75} distance={20} color='#ffd9b8' />
-      <pointLight position={[6, 5.2, 14.5]} intensity={75} distance={20} color='#ffd9b8' />
-      <pointLight position={[8.4, 3.2, 9]} intensity={45} distance={11} color='#ffcf7a' />
-      <pointLight position={[-8.4, 3.2, 8]} intensity={35} distance={11} color='#ff8fb8' />
-      <pointLight position={[0, 3, -9]} intensity={55} distance={24} color='#ffd9b8' />
-      <pointLight position={[0, 3, -29]} intensity={55} distance={24} color='#ffd9b8' />
-      <pointLight position={[near.x, 5.6, near.z]} intensity={16} distance={16} color='#ffd9b8' />
-      <pointLight position={[front.x, 3.6, front.z]} intensity={60} distance={15} color='#cfd8ff' />
+      <hemisphereLight ref={sky} args={['#ffe9d6', '#2a1a22', SKY_LIGHT]} />
+      <ambientLight ref={ambient} intensity={AMBIENT_LIGHT} />
+      <group ref={house}>
+        {HOUSE_LIGHTS.map((light, i) => (
+          <pointLight key={i} {...light} />
+        ))}
+      </group>
+      <pointLight ref={salaLight} position={[near.x, 5.6, near.z]} intensity={SALA_LIGHT} distance={16} color='#ffd9b8' />
+      <pointLight ref={screenLight} position={[front.x, 3.6, front.z]} intensity={SCREEN_LIGHT} distance={15} color='#cfd8ff' />
+      <Gate open={gateOpen} />
 
       <group ref={wallsRef}>
         {WALLS.map((wall, i) => (

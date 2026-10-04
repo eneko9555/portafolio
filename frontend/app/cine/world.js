@@ -81,7 +81,7 @@ const OBSTACLES = [
   ...COLUMNS.map(([x, z]) => box(x - 0.4, x + 0.4, z - 0.4, z + 0.4)),
   ...BENCHES.map(([x, z]) => box(x - 1.2, x + 1.2, z - 0.35, z + 0.35)),
   ...PLANTS.map(([x, z]) => box(x - 0.35, x + 0.35, z - 0.35, z + 0.35)),
-  box(1.35, 2.05, -2.55, -1.85),
+  box(1.75, 2.45, 0.8, 1.5),
   ...SALAS.flatMap((sala) =>
     ROW_U.flatMap((u) =>
       BLOCKS_V.map((block) => {
@@ -93,7 +93,12 @@ const OBSTACLES = [
   )
 ]
 
-export function canStand (x, z) {
+// Control de entradas en la boca del pasillo: sin entrada no se pasa de esta línea
+export const GATE_Z = 0.75
+export const atGate = (x, z) => z < GATE_Z && Math.abs(x) < HALF
+
+export function canStand (x, z, ticket = true) {
+  if (!ticket && atGate(x, z)) return false
   const margin = PLAYER_RADIUS + WALL / 2
   const inZone = ZONES.some(
     (zone) => x >= zone.x[0] + margin && x <= zone.x[1] - margin && z >= zone.z[0] + margin && z <= zone.z[1] - margin
@@ -132,29 +137,32 @@ export function nearestSeat (salaId, x, z, maxDistance = 1.15) {
   return best
 }
 
-// Personal del cine con el que se puede hablar. talk es el punto al que hay que acercarse.
+// Personal del cine con el que se puede hablar. talk es el punto al que hay que acercarse;
+// counter indica que atiende detrás de un mostrador, con las manos apoyadas encima; guard, que va de vigilante.
 export const STAFF = [
   {
     id: 'taquilla',
     name: 'Ane',
     role: 'Taquilla',
-    x: -11.3,
+    x: -10.65,
     z: 8,
+    counter: true,
     facing: Math.PI / 2,
     talk: { x: -8.7, z: 8 },
     lines: [
       '¡Hola! Bienvenido al cine de Eneko Fernández. Hoy la entrada es gratis.',
       'Tenemos cinco sesiones. En las salas 1, 2 y 3 se proyectan sus productos: Askesis, Chronia Timeline y OurMap.',
       'En la sala 4 cuenta quién es, dónde trabaja y qué ha estudiado. La sala 5 es para ponerse en contacto con él.',
-      'Sigue el pasillo del fondo, entra en la sala que quieras y siéntate en cualquier butaca libre.'
+      'Enséñale la entrada a Mikel, el vigilante del pasillo del fondo, entra en la sala que quieras y siéntate en cualquier butaca libre.'
     ]
   },
   {
     id: 'palomitas',
     name: 'Jon',
     role: 'Palomitas',
-    x: 11.3,
+    x: 10.64,
     z: 8.4,
+    counter: true,
     facing: -Math.PI / 2,
     talk: { x: 8.7, z: 8.4 },
     lines: [
@@ -166,15 +174,16 @@ export const STAFF = [
   {
     id: 'acomodador',
     name: 'Mikel',
-    role: 'Acomodador',
-    x: 1.7,
-    z: -2.2,
-    facing: -0.5,
-    talk: { x: 0.9, z: -1.6 },
+    role: 'Vigilante',
+    x: 2.1,
+    z: 1.15,
+    guard: true,
+    facing: -0.45,
+    talk: { x: 0.8, z: 1.9 },
     lines: [
       'Las salas 1, 2 y 3 quedan a tu derecha según entras. La 4 y la 5, a tu izquierda.',
       'Dentro, acércate a una butaca libre y pulsa E para sentarte. Con las flechas pasas la película.',
-      'Eneko trabaja como desarrollador full stack en Butler Scientifics y es co-fundador de Askesis. En la sala 4 lo cuenta con detalle.'
+      'Cada sala en la que te sientes te sella la entrada. Si completas las cinco, vuelve a verme.'
     ]
   }
 ]
@@ -213,7 +222,7 @@ export const IDLERS = [
   { x: -4.2, z: 6.2, facing: SOUTH + 0.5 },
   { x: -3.5, z: 7, facing: NORTH + 0.6 },
   // Personal de la barra
-  { x: 11.3, z: 9.6, facing: WEST, staff: true },
+  { x: 10.64, z: 9.6, facing: WEST, staff: true, counter: true },
   // Sentados en los bancos
   { x: -5.1, z: 14.6, facing: NORTH, seated: true },
   { x: -4.1, z: 14.6, facing: NORTH, seated: true },

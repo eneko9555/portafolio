@@ -3,7 +3,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import Person from './Person'
-import { SCREEN, canStand, nearestSeat, nearestStaff, roomAt, salaById, salaPoint } from './world'
+import { SCREEN, atGate, canStand, nearestSeat, nearestStaff, roomAt, salaById, salaPoint } from './world'
 import { sounds } from './audio'
 
 const WALK_SPEED = 3.4
@@ -12,16 +12,21 @@ const TURN_SPEED = 2
 const CAMERA_DISTANCE = 4.6
 const HEAD_HEIGHT = 1.5
 const BASE_FOV = 55
-const PLAYER_LOOK = { skin: '#e9bd97', hair: '#2a1d14', top: '#f2f2f0', bottom: '#23232b' }
+const PLAYER_LOOK = { skin: '#e9bd97', hair: '#2a1d14', top: '#f2f2f0', bottom: '#3b4f7a' }
+
+// Metros por paso al andar y al correr
+const WALK_STEP = 1.05
+const RUN_STEP = 1.45
 
 const damp = (rate, delta) => 1 - Math.exp(-rate * delta)
+// Pasos dados hasta una fase de zancada: el pie pisa cuando la pierna llega a su máximo
+const footfalls = (stride) => Math.floor((stride - Math.PI / 2) / Math.PI)
 
 // Jugador: movimiento con colisiones, cámara en tercera persona y detección de con qué se puede interactuar.
 // game es un ref con el estado que cambia cada fotograma; lo que afecta a la interfaz se avisa con onChange.
-export default function Player ({ game, wallsRef, onChange, popcorn, drink }) {
+export default function Player ({ game, wallsRef, onChange, onGate, popcorn, drink }) {
   const figure = useRef()
-  const motion = useRef({ moving: false, eating: 0, drinking: 0 })
-  const stride = useRef(0)
+  const motion = useRef({ moving: false, eating: 0, drinking: 0, stride: 0 })
   const { camera, gl } = useThree()
   const raycaster = useMemo(() => new THREE.Raycaster(), [])
   const vectors = useMemo(
@@ -81,16 +86,18 @@ export default function Player ({ game, wallsRef, onChange, popcorn, drink }) {
         const dz = (-Math.cos(g.yaw) * forward - Math.sin(g.yaw) * strafe) * speed
         const before = { x: g.x, z: g.z }
         // Los ejes se resuelven por separado para deslizarse a lo largo de las paredes
-        if (canStand(g.x + dx, g.z)) g.x += dx
-        if (canStand(g.x, g.z + dz)) g.z += dz
+        if (canStand(g.x + dx, g.z, g.ticket)) g.x += dx
+        if (canStand(g.x, g.z + dz, g.ticket)) g.z += dz
+        // Sin entrada, el vigilante te para en la boca del pasillo
+        if (!g.ticket && (atGate(before.x + dx, before.z) || atGate(before.x, before.z + dz))) onGate()
         g.facing = Math.atan2(dx, dz)
         const walked = Math.hypot(g.x - before.x, g.z - before.z)
         moving = walked > 0.0005
-        stride.current += walked
-        if (stride.current > 0.85) {
-          stride.current = 0
-          sounds.step()
-        }
+        // La zancada avanza con la distancia recorrida, así las piernas no patinan
+        // y el paso suena justo cuando una pierna llega delante
+        const previous = motion.current.stride
+        motion.current.stride += (walked / (keys.has('shift') ? RUN_STEP : WALK_STEP)) * Math.PI
+        if (footfalls(motion.current.stride) > footfalls(previous)) sounds.step()
       }
 
       const room = roomAt(g.x, g.z)
