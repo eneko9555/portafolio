@@ -88,8 +88,8 @@ body {
   }
 
   .phone {
-    @apply overflow-hidden rounded-[1.4rem] border-[5px] border-[#1c1c20] bg-surface sm:rounded-[1.8rem] sm:border-[6px];
-    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px #2c2c32;
+    @apply overflow-hidden rounded-[0.9rem] border-2 border-[#1c1c20] bg-surface sm:rounded-[1.3rem] sm:border-[3px];
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px #34343a;
   }
 }
 

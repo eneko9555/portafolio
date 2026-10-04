@@ -17,8 +17,8 @@ const Header = () => {
       </a>
       <nav aria-label='Principal' className='container-page flex h-16 items-center justify-between gap-4'>
         <Link href='/' className='flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-tight'>
-          <span aria-hidden='true' className='grid h-7 w-7 place-items-center rounded-lg bg-ink text-[0.7rem] font-bold tracking-tighter text-bg'>
-            EF
+          <span aria-hidden='true' className='grid h-8 w-8 place-items-center rounded-lg border border-line bg-surface pb-0.5 font-serif text-[1.35rem] font-normal italic leading-none tracking-normal'>
+            ef
           </span>
           <span className='hidden sm:inline'>Eneko Fernández</span>
         </Link>

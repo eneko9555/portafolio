@@ -81,10 +81,11 @@ export const courses = [
 ]
 
 export const skills = [
-  { title: 'Frontend', items: ['Next.js', 'React', 'TypeScript', 'JavaScript (ES6+)', 'Tailwind CSS', 'HTML5 / CSS3'] },
-  { title: 'Backend', items: ['Node.js', 'Express', 'C# (.NET Core)', 'MongoDB', 'SQL (MySQL / PostgreSQL)', 'Java', 'Python', 'REST APIs'] },
+  { title: 'Frontend', items: ['Next.js', 'React', 'TypeScript', 'JavaScript (ES6+)', 'Tailwind CSS', 'HTML5 / CSS3', 'Vite', 'Framer Motion', 'PWA'] },
+  { title: 'Backend', items: ['Node.js', 'Express', 'C# (.NET Core)', 'MongoDB', 'SQL (MySQL / PostgreSQL)', 'Java', 'Python', 'REST APIs', 'Socket.IO'] },
+  { title: 'Servicios e integraciones', items: ['Stripe', 'Supabase', 'Firebase', 'Mapbox GL', 'Agora', 'MCP', 'OAuth 2.1'] },
   { title: 'DevOps y herramientas', items: ['Git / GitHub', 'Docker', 'AWS (S3, EC2)', 'Cloudflare', 'Vercel', 'Railway', 'CI/CD'] },
-  { title: 'Desarrollo con IA', items: ['Claude Code', 'Cursor', 'Antigravity', 'Skills'] }
+  { title: 'Desarrollo con IA', items: ['Claude Code', 'Cursor', 'Antigravity', 'Agent Skills'] }
 ]
 
 export const languages = [
