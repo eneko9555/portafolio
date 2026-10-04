@@ -2,18 +2,27 @@ import Link from 'next/link'
 
 const links = [
   { href: '/#proyectos', label: 'Proyectos' },
-  { href: '/#sobre-mi', label: 'Sobre mí' },
+  { href: '/about', label: 'Sobre mí' },
   { href: '/contact', label: 'Contacto' }
 ]
 
 const Header = () => {
   return (
-    <header className='sticky top-0 z-50 border-b border-line/70 bg-bg/80 backdrop-blur-md'>
-      <nav className='container-page flex h-16 items-center justify-between gap-4'>
-        <Link href='/' className='text-base font-semibold tracking-tight'>
-          Eneko Fernández
+    <header className='sticky top-0 z-40 border-b border-line/60 bg-bg/75 backdrop-blur-xl'>
+      <a
+        href='#contenido'
+        className='sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-full focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-bg'
+      >
+        Saltar al contenido
+      </a>
+      <nav aria-label='Principal' className='container-page flex h-16 items-center justify-between gap-4'>
+        <Link href='/' className='flex items-center gap-2.5 text-[0.95rem] font-semibold tracking-tight'>
+          <span aria-hidden='true' className='grid h-7 w-7 place-items-center rounded-lg bg-ink text-[0.7rem] font-bold tracking-tighter text-bg'>
+            EF
+          </span>
+          <span className='hidden sm:inline'>Eneko Fernández</span>
         </Link>
-        <ul className='flex items-center gap-4 text-sm text-muted sm:gap-8'>
+        <ul className='flex items-center gap-5 text-sm text-muted sm:gap-8'>
           {links.map((link) => (
             <li key={link.href}>
               <Link href={link.href} className='transition-colors duration-200 hover:text-ink'>

@@ -2,6 +2,7 @@ import './globals.css'
 import { Inter_Tight, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import Reveal from './components/Reveal'
 
 const sans = Inter_Tight({ subsets: ['latin'], variable: '--font-sans' })
 const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif', adjustFontFallback: false })
@@ -14,11 +15,10 @@ export const metadata = {
     template: '%s | Eneko Fernández'
   },
   description:
-    'Portfolio de Eneko Fernández, desarrollador full stack. Askesis, Chronia Timeline y OurMap: productos web construidos con React, Next.js y Node.',
-  icons: { icon: '/iconImages/fav.png' },
+    'Eneko Fernández, desarrollador full stack en Butler Scientifics y co-fundador de Askesis. Productos web construidos de principio a fin: Askesis, Chronia Timeline y OurMap.',
   openGraph: {
     title: 'Eneko Fernández | Desarrollador full stack',
-    description: 'Askesis, Chronia Timeline y OurMap: productos web construidos con React, Next.js y Node.',
+    description: 'Desarrollador full stack y co-fundador de Askesis. Productos web construidos de principio a fin.',
     type: 'website',
     locale: 'es_ES',
     images: [{ url: '/og/home.jpg', width: 1200, height: 630 }]
@@ -30,8 +30,9 @@ export default function RootLayout ({ children }) {
     <html lang='es' className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
       <body className='min-h-screen font-sans antialiased'>
         <Header />
-        {children}
+        <div id='contenido'>{children}</div>
         <Footer />
+        <Reveal />
       </body>
     </html>
   )

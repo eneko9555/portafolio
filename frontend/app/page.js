@@ -1,87 +1,88 @@
 import Link from 'next/link'
 import FeaturedProject from './components/FeaturedProject'
-import { featuredProjects, otherProjects, stack, contact } from './data/projects'
+import ExperienceList from './components/ExperienceList'
+import { featuredProjects, contact } from './data/projects'
+import { profile, stats, skills } from './data/profile'
 
 export default function Home () {
   return (
     <main>
-      <section className='container-page pb-20 pt-20 sm:pb-28 sm:pt-32'>
-        <p className='label rise'>Desarrollador full stack</p>
-        <h1 className='rise rise-2 mt-6 max-w-4xl text-5xl font-semibold leading-[1.02] tracking-tight sm:text-7xl'>
-          Construyo productos web completos,{' '}
-          <span className='font-serif font-normal italic text-muted'>de la idea a producción.</span>
-        </h1>
-        <p className='rise rise-3 mt-8 max-w-2xl text-lg text-muted sm:text-xl'>
-          Soy Eneko Fernández. Diseño y desarrollo aplicaciones con React, Next.js y Node. Aquí están
-          los tres productos en los que más he trabajado: Askesis, Chronia Timeline y OurMap.
-        </p>
-        <div className='rise rise-3 mt-10 flex flex-wrap gap-3'>
-          <Link href='/#proyectos' className='btn-primary'>
-            Ver proyectos <span aria-hidden='true'>↓</span>
-          </Link>
-          <Link href='/contact' className='btn-ghost'>Contacto</Link>
+      <section className='relative overflow-hidden'>
+        <div aria-hidden='true' className='glow pointer-events-none absolute inset-0' />
+        <div className='container-page relative pb-20 pt-20 sm:pb-28 sm:pt-32'>
+          <p className='label rise flex items-center gap-3'>
+            <span className='h-px w-8 bg-muted' aria-hidden='true' />
+            {profile.title} · {profile.location}
+          </p>
+          <h1 className='rise rise-2 mt-7 max-w-5xl text-[2.9rem] font-semibold leading-[1.02] tracking-tight sm:text-7xl lg:text-[5.2rem]'>
+            Construyo productos web completos,{' '}
+            <span className='font-serif font-normal italic text-muted'>de la idea a producción.</span>
+          </h1>
+          <p className='rise rise-3 mt-8 max-w-2xl text-lg leading-relaxed text-muted sm:text-xl'>
+            Soy Eneko Fernández. Trabajo como desarrollador full stack en Butler Scientifics y soy
+            co-fundador de Askesis, una plataforma SaaS con más de 600 usuarios activos.
+          </p>
+          <div className='rise rise-3 mt-10 flex flex-wrap gap-3'>
+            <Link href='/#proyectos' className='btn-primary'>
+              Ver proyectos <span aria-hidden='true'>↓</span>
+            </Link>
+            <Link href='/about' className='btn-ghost'>Sobre mí</Link>
+          </div>
+
+          <dl className='rise rise-4 mt-20 grid gap-8 border-t border-line pt-8 sm:grid-cols-3'>
+            {stats.map((stat) => (
+              <div key={stat.label}>
+                <dd className='text-4xl font-semibold tracking-tight sm:text-5xl'>{stat.value}</dd>
+                <dt className='mt-2 max-w-[16rem] text-sm leading-relaxed text-muted'>{stat.label}</dt>
+              </div>
+            ))}
+          </dl>
         </div>
       </section>
 
-      <section id='proyectos' className='container-page -mt-20 pb-24 pt-20'>
-        <div className='flex items-end justify-between border-t border-line pt-8'>
-          <h2 className='text-2xl font-semibold tracking-tight sm:text-3xl'>Proyectos principales</h2>
-          <p className='label hidden sm:block'>03 productos</p>
+      <section id='proyectos' className='container-page -mt-20 pb-28 pt-20'>
+        <div data-reveal className='flex items-end justify-between gap-6 border-t border-line pt-10'>
+          <div>
+            <p className='label'>Proyectos</p>
+            <h2 className='section-title mt-3'>Tres productos, de principio a fin</h2>
+          </div>
+          <p className='hidden max-w-xs text-sm leading-relaxed text-muted md:block'>
+            Cada uno tiene su caso completo: qué resuelve, cuál es mi papel y cómo está construido.
+          </p>
         </div>
-        <div className='mt-10 space-y-8'>
+        <div className='mt-12 space-y-8'>
           {featuredProjects.map((project, index) => (
             <FeaturedProject key={project.slug} project={project} index={index} />
           ))}
         </div>
       </section>
 
-      <section className='container-page pb-24'>
-        <div className='border-t border-line pt-8'>
-          <h2 className='text-2xl font-semibold tracking-tight sm:text-3xl'>Otros proyectos</h2>
-          <p className='mt-3 max-w-2xl text-muted'>
-            Proyectos más pequeños y ejercicios de formación con los que aprendí el stack.
-          </p>
+      <section className='container-page pb-28'>
+        <div data-reveal>
+          <p className='label'>Experiencia</p>
+          <h2 className='section-title mt-3'>Dónde trabajo</h2>
         </div>
-        <ul className='mt-8 divide-y divide-line border-y border-line'>
-          {otherProjects.map((project) => (
-            <li key={project.name} className='grid gap-2 py-5 sm:grid-cols-12 sm:items-baseline sm:gap-6'>
-              <h3 className='font-medium sm:col-span-3'>{project.name}</h3>
-              <p className='text-sm text-muted sm:col-span-5'>{project.description}</p>
-              <p className='font-mono text-xs text-muted sm:col-span-2'>{project.technologies.slice(0, 3).join(' · ')}</p>
-              <p className='flex gap-4 text-sm sm:col-span-2 sm:justify-end'>
-                <a href={project.website} target='_blank' rel='noreferrer' className='link'>
-                  Web <span aria-hidden='true'>↗</span>
-                </a>
-                {project.github && (
-                  <a href={project.github} target='_blank' rel='noreferrer' className='link'>
-                    Código <span aria-hidden='true'>↗</span>
-                  </a>
-                )}
-              </p>
-            </li>
-          ))}
-        </ul>
+        <div className='mt-10'>
+          <ExperienceList />
+        </div>
       </section>
 
-      <section id='sobre-mi' className='container-page -mt-20 pb-24 pt-20'>
-        <div className='grid gap-12 border-t border-line pt-8 lg:grid-cols-12'>
-          <div className='lg:col-span-6'>
-            <h2 className='text-2xl font-semibold tracking-tight sm:text-3xl'>Sobre mí</h2>
-            <div className='mt-6 space-y-4 text-lg text-muted'>
-              <p>
-                Soy desarrollador web full stack con conocimientos en sistemas y redes. Me formé de
-                manera autodidacta y amplié esa base con el bootcamp de Desarrollo Web Full Stack de
-                ISDI Coders.
-              </p>
-              <p>
-                Me gusta trabajar el producto entero: el modelo de datos, la API, la interfaz y el
-                despliegue. Busco soluciones sencillas y que escalen, y prefiero enseñar lo que hago
-                con aplicaciones que se pueden abrir y usar.
-              </p>
+      <section className='container-page pb-28'>
+        <div className='grid gap-12 lg:grid-cols-12'>
+          <div data-reveal className='lg:col-span-6'>
+            <p className='label'>Sobre mí</p>
+            <h2 className='section-title mt-3'>Del modelo de datos al despliegue</h2>
+            <div className='mt-6 space-y-4'>
+              {profile.about.slice(0, 2).map((paragraph) => (
+                <p key={paragraph} className='prose-lead'>{paragraph}</p>
+              ))}
             </div>
+            <Link href='/about' className='btn-ghost mt-8'>
+              Experiencia y formación <span aria-hidden='true'>→</span>
+            </Link>
           </div>
-          <dl className='grid gap-8 sm:grid-cols-2 lg:col-span-6'>
-            {stack.map((group) => (
+          <dl data-reveal className='grid content-start gap-8 sm:grid-cols-2 lg:col-span-5 lg:col-start-8'>
+            {skills.map((group) => (
               <div key={group.title}>
                 <dt className='label'>{group.title}</dt>
                 <dd className='mt-3 flex flex-wrap gap-2'>
@@ -95,16 +96,19 @@ export default function Home () {
         </div>
       </section>
 
-      <section className='container-page pb-24'>
-        <div className='rounded-2xl border border-line bg-surface p-8 sm:p-14'>
-          <p className='label'>Contacto</p>
-          <h2 className='mt-4 max-w-2xl text-3xl font-semibold tracking-tight sm:text-5xl'>
-            ¿Tienes un proyecto o una oportunidad?{' '}
-            <span className='font-serif font-normal italic text-muted'>Hablemos.</span>
-          </h2>
-          <div className='mt-8 flex flex-wrap items-center gap-4'>
-            <Link href='/contact' className='btn-primary'>Escribirme</Link>
-            <a href={`mailto:${contact.email}`} className='link text-muted'>{contact.email}</a>
+      <section className='container-page pb-28'>
+        <div data-reveal className='relative overflow-hidden rounded-3xl border border-line bg-surface p-8 sm:p-16'>
+          <div aria-hidden='true' className='glow pointer-events-none absolute inset-0 opacity-70' />
+          <div className='relative'>
+            <p className='label'>Contacto</p>
+            <h2 className='mt-4 max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-6xl'>
+              ¿Tienes un proyecto o una oportunidad?{' '}
+              <span className='font-serif font-normal italic text-muted'>Hablemos.</span>
+            </h2>
+            <div className='mt-10 flex flex-wrap items-center gap-5'>
+              <Link href='/contact' className='btn-primary'>Escribirme</Link>
+              <a href={`mailto:${contact.email}`} className='link text-muted'>{contact.email}</a>
+            </div>
           </div>
         </div>
       </section>

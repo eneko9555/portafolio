@@ -14,11 +14,18 @@ html {
 body {
   background: #0a0a0b;
   color: #f2f2f0;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
   background: #f2f2f0;
   color: #0a0a0b;
+}
+
+:focus-visible {
+  outline: 2px solid #f2f2f0;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 @layer components {
@@ -27,15 +34,15 @@ body {
   }
 
   .label {
-    @apply font-mono text-xs uppercase tracking-[0.18em] text-muted;
+    @apply font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted;
   }
 
   .chip {
-    @apply rounded-full border border-line px-3 py-1 text-xs text-muted;
+    @apply rounded-full border border-line bg-white/[0.02] px-3 py-1 text-xs text-muted;
   }
 
   .btn {
-    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors duration-200;
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition duration-200 active:scale-[0.98];
   }
 
   .btn-primary {
@@ -43,25 +50,70 @@ body {
   }
 
   .btn-ghost {
-    @apply btn border border-line text-ink hover:border-muted;
+    @apply btn border border-line text-ink hover:border-muted hover:bg-white/[0.03];
   }
 
   .link {
     @apply underline decoration-line underline-offset-4 transition-colors duration-200 hover:decoration-ink;
   }
 
-  .shot {
-    @apply overflow-hidden rounded-xl border border-line bg-surface;
-  }
-
   .field {
     @apply w-full rounded-lg border border-line bg-surface px-4 py-3 text-ink outline-none transition-colors duration-200 placeholder:text-muted focus:border-muted;
   }
+
+  .section-title {
+    @apply text-3xl font-semibold tracking-tight sm:text-4xl;
+  }
+
+  .prose-lead {
+    @apply text-lg leading-relaxed text-muted;
+  }
+
+  /* Marcos de dispositivo para las capturas */
+  .frame {
+    @apply overflow-hidden rounded-xl border border-line bg-surface;
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.02);
+  }
+
+  .frame-bar {
+    @apply flex h-8 items-center gap-1.5 border-b border-line bg-[#161619] px-3;
+  }
+
+  .frame-dot {
+    @apply h-2 w-2 rounded-full bg-[#34343a];
+  }
+
+  .frame-url {
+    @apply mx-auto -translate-x-4 truncate rounded-md bg-white/[0.04] px-3 py-0.5 font-mono text-[10px] text-muted;
+  }
+
+  .phone {
+    @apply overflow-hidden rounded-[1.4rem] border-[5px] border-[#1c1c20] bg-surface sm:rounded-[1.8rem] sm:border-[6px];
+    box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px #2c2c32;
+  }
+}
+
+/* Halo de fondo del hero */
+.glow {
+  background:
+    radial-gradient(50rem 26rem at 15% -10%, rgba(224, 69, 127, 0.1), transparent 70%),
+    radial-gradient(46rem 24rem at 85% -5%, rgba(91, 134, 255, 0.1), transparent 70%);
+}
+
+/* Lightbox */
+dialog.lightbox {
+  background: transparent;
+  color: inherit;
+}
+
+dialog.lightbox::backdrop {
+  background: rgba(5, 5, 6, 0.92);
+  backdrop-filter: blur(8px);
 }
 
 @media (prefers-reduced-motion: no-preference) {
   .rise {
-    animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
   }
 
   .rise-2 {
@@ -70,6 +122,32 @@ body {
 
   .rise-3 {
     animation-delay: 0.16s;
+  }
+
+  .rise-4 {
+    animation-delay: 0.24s;
+  }
+
+  /* Aparición al hacer scroll: solo se oculta cuando el observador está activo */
+  .reveal-ready [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .reveal-ready [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  dialog.lightbox[open] {
+    animation: fade 0.2s ease-out;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
 }
 
@@ -82,5 +160,15 @@ body {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
