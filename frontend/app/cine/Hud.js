@@ -12,35 +12,6 @@ const Key = ({ children, dark = false }) => (
 
 const panel = 'rounded-2xl border border-line bg-bg/80 backdrop-blur-md'
 
-function Intro ({ onStart }) {
-  return (
-    <div className='pointer-events-auto absolute inset-0 grid place-items-center bg-bg/70 p-5 backdrop-blur-sm'>
-      <div className={`${panel} w-full max-w-xl p-8 sm:p-10`}>
-        <p className='label'>Sesión continua</p>
-        <h1 className='mt-3 text-5xl font-semibold tracking-tight'>
-          Cine <span className='font-serif font-normal italic text-muted'>ef</span>
-        </h1>
-        <p className='mt-4 leading-relaxed text-muted'>
-          El trabajo de Eneko Fernández, proyectado en cinco salas. Habla con el personal, pide unas palomitas y
-          siéntate en la sala que quieras: cada pantalla cuenta un proyecto.
-        </p>
-        <ul className='mt-6 grid gap-2.5 text-sm text-muted sm:grid-cols-2'>
-          <li><Key>W</Key> <Key>A</Key> <Key>S</Key> <Key>D</Key> moverse</li>
-          <li><Key>←</Key> <Key>→</Key> o arrastrar: girar</li>
-          <li><Key>Mayús</Key> correr</li>
-          <li><Key>E</Key> hablar y sentarse</li>
-          <li><Key>1</Key> comer palomitas</li>
-          <li><Key>2</Key> beber</li>
-        </ul>
-        <div className='mt-8 flex flex-wrap gap-3'>
-          <button type='button' onClick={() => onStart(true)} className='btn-primary'>Entrar con sonido</button>
-          <button type='button' onClick={() => onStart(false)} className='btn-ghost'>Entrar en silencio</button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // Palanca táctil: solo aparece en pantallas sin ratón
 function Joystick ({ game }) {
   const base = useRef()
@@ -100,13 +71,11 @@ function CopyEmail () {
 }
 
 // Interfaz sobre la escena: dónde estás, qué puedes hacer, con quién hablas y qué llevas encima
-export default function Hud ({ started, onStart, room, target, seatedSala, slide, items, dialog, toast, sound, game, onInteract, onStep, onAdvance, onChoose, onConsume, onToggleSound }) {
+export default function Hud ({ room, target, seatedSala, slide, items, dialog, toast, sound, game, onInteract, onStep, onAdvance, onChoose, onConsume, onToggleSound }) {
   const [touch, setTouch] = useState(false)
   useEffect(() => {
     setTouch(window.matchMedia('(pointer: coarse)').matches)
   }, [])
-
-  if (!started) return <Intro onStart={onStart} />
 
   const page = dialog?.pages[dialog.index]
   const total = seatedSala ? SLIDES[seatedSala].length : 0
@@ -119,7 +88,7 @@ export default function Hud ({ started, onStart, room, target, seatedSala, slide
             <span aria-hidden='true'>←</span> Volver al portfolio
           </Link>
           <button type='button' onClick={onToggleSound} aria-pressed={sound} className='btn-ghost bg-bg/70 backdrop-blur-md'>
-            Sonido: {sound ? 'sí' : 'no'}
+            Efectos: {sound ? 'sí' : 'no'}
           </button>
         </div>
         <p className='label rounded-full border border-line bg-bg/70 px-4 py-2.5 backdrop-blur-md' aria-live='polite'>
@@ -188,16 +157,18 @@ export default function Hud ({ started, onStart, room, target, seatedSala, slide
             {touch
               ? <Joystick game={game} />
               : (
-                <p className='hidden rounded-xl border border-line bg-bg/70 px-4 py-3 text-sm text-muted backdrop-blur-md lg:block'>
-                  <Key>W</Key> <Key>A</Key> <Key>S</Key> <Key>D</Key> moverse · <Key>←</Key> <Key>→</Key> girar · <Key>Mayús</Key> correr
-                </p>
+                <ul className='hidden space-y-1.5 rounded-xl border border-line bg-bg/70 px-4 py-3 text-sm text-muted backdrop-blur-md md:block'>
+                  <li><Key>W</Key> <Key>A</Key> <Key>S</Key> <Key>D</Key> moverse · <Key>Mayús</Key> correr</li>
+                  <li>Girar la cámara: arrastra con el ratón o <Key>←</Key> <Key>→</Key></li>
+                  <li><Key>E</Key> hablar y sentarse · <Key>1</Key> comer · <Key>2</Key> beber</li>
+                </ul>
                 )}
             {target && (
               <button type='button' onClick={onInteract} className='btn-primary pointer-events-auto mx-auto'>
                 <Key dark>E</Key> {target.label}
               </button>
             )}
-            <span className='hidden lg:block' />
+            <span className='hidden md:block' />
           </div>
         )}
 

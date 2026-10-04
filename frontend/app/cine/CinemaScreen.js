@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { SCREEN, salaPoint } from './world'
 import { SLIDES } from './slides'
-import { makeSlideTexture } from './textures'
+import { makeSlideTexture, preloadImages } from './textures'
 
 // Pantalla de una sala. Solo la sala en la que estás carga las diapositivas a resolución completa;
 // las demás muestran su portada en pequeño.
@@ -18,23 +18,29 @@ export default function CinemaScreen ({ sala, slide, active }) {
 
     const load = (index, size) => {
       const key = `${index}-${size}`
-      if (!textures.has(key)) textures.set(key, makeSlideTexture(slides[index], context(index), size))
+      if (!textures.has(key)) {
+        const pending = makeSlideTexture(slides[index], context(index), size)
+        // Un fallo o una diapositiva sin su imagen no se guardan: la próxima vez se vuelve a intentar
+        pending.then((result) => { if (result.userData.incomplete) textures.delete(key) }, () => textures.delete(key))
+        textures.set(key, pending)
+      }
       return textures.get(key)
     }
 
     if (active) {
+      preloadImages(slides)
       load(slide, 1920).then((result) => {
         if (!cancelled) setTexture(result)
-      })
-      load((slide + 1) % slides.length, 1920)
+      }).catch(() => {})
+      load((slide + 1) % slides.length, 1920).catch(() => {})
     } else {
       load(0, 960).then((result) => {
         if (!cancelled) setTexture(result)
-      })
+      }).catch(() => {})
       // Al salir de la sala se liberan las diapositivas grandes
       textures.forEach((pending, key) => {
         if (key.endsWith('-1920')) {
-          pending.then((result) => result.dispose())
+          pending.then((result) => result.dispose()).catch(() => {})
           textures.delete(key)
         }
       })
@@ -48,7 +54,7 @@ export default function CinemaScreen ({ sala, slide, active }) {
   useEffect(() => {
     const textures = cache.current
     return () => {
-      textures.forEach((pending) => pending.then((result) => result.dispose()))
+      textures.forEach((pending) => pending.then((result) => result.dispose()).catch(() => {}))
       textures.clear()
     }
   }, [])

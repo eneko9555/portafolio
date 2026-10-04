@@ -9,10 +9,9 @@ import Hud from './Hud'
 import { SPAWN, SALAS, salaById, salaPoint } from './world'
 import { SLIDES } from './slides'
 import { buildDialog } from './dialogs'
-import { setSound, setAmbientLevel, sounds } from './audio'
+import { setSound, sounds } from './audio'
 
 const MOVE_KEYS = ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'shift']
-const AMBIENT = { lobby: 0.16, corridor: 0.08 }
 
 // Sala cuya iluminación se enciende: la tuya o, desde el pasillo, la de la puerta más cercana
 function salaToLight (room, x, z, previous) {
@@ -45,16 +44,15 @@ export default function Cine () {
     target: null,
     seated: false,
     seat: null,
-    frozen: true,
+    frozen: false,
     motion: null
   })
-  const [started, setStarted] = useState(false)
   const [view, setView] = useState({ room: 'lobby', target: null, seated: false, lightSala: 'askesis' })
   const [slides, setSlides] = useState(() => Object.fromEntries(SALAS.map((sala) => [sala.id, 0])))
   const [items, setItems] = useState({ popcorn: 0, drink: 0, ticket: false })
   const [dialog, setDialog] = useState(null)
   const [toast, setToast] = useState(null)
-  const [sound, setSoundOn] = useState(false)
+  const [sound, setSoundOn] = useState(true)
 
   const itemsRef = useRef(items)
   itemsRef.current = items
@@ -76,7 +74,6 @@ export default function Cine () {
       seated: g.seated,
       lightSala: salaToLight(g.room, g.x, g.z, previous.lightSala)
     }))
-    setAmbientLevel(AMBIENT[g.room] ?? 0.03)
   }, [])
 
   // Diálogos
@@ -155,22 +152,28 @@ export default function Cine () {
     if (left === 1) notify(isPopcorn ? 'Te has acabado las palomitas.' : 'Te has terminado el refresco.')
   }, [notify])
 
-  const start = useCallback((withSound) => {
-    if (withSound) setSoundOn(setSound(true))
-    game.current.frozen = false
-    setStarted(true)
-    sync()
-  }, [sync])
-
   const toggleSound = useCallback(() => {
     setSoundOn((current) => {
-      const next = setSound(!current)
-      if (next) setAmbientLevel(AMBIENT[game.current.room] ?? 0.03)
-      return next
+      setSound(!current)
+      return !current
     })
   }, [])
 
-  useEffect(() => () => { setSound(false) }, [])
+  // Los efectos van activados de entrada, pero el navegador solo deja sonar tras la primera pulsación
+  const soundRef = useRef(sound)
+  soundRef.current = sound
+  useEffect(() => {
+    const unlock = () => {
+      if (soundRef.current) setSound(true)
+    }
+    window.addEventListener('pointerdown', unlock, { once: true })
+    window.addEventListener('keydown', unlock, { once: true })
+    return () => {
+      window.removeEventListener('pointerdown', unlock)
+      window.removeEventListener('keydown', unlock)
+      setSound(false)
+    }
+  }, [])
 
   useEffect(() => {
     const down = (e) => {
@@ -178,10 +181,6 @@ export default function Cine () {
       const key = e.key.toLowerCase()
       const g = game.current
 
-      if (!started) {
-        if (key === 'enter') start(false)
-        return
-      }
       if (dialogRef.current) {
         if (key === 'escape') closeDialog()
         else if (['e', 'enter', ' '].includes(key) && !e.repeat) advance()
@@ -215,7 +214,7 @@ export default function Cine () {
       window.removeEventListener('keyup', up)
       window.removeEventListener('blur', blur)
     }
-  }, [started, start, interact, advance, choose, closeDialog, consume, step])
+  }, [interact, advance, choose, closeDialog, consume, step])
 
   // Estado accesible desde la consola con ?debug, para pruebas
   useEffect(() => {
@@ -235,7 +234,7 @@ export default function Cine () {
   const seatedSala = view.seated ? game.current.seat?.salaId : null
 
   return (
-    <div className='fixed inset-0 z-50 select-none bg-bg'>
+    <div className='fixed inset-0 z-50 select-none bg-bg' onContextMenu={(e) => e.preventDefault()}>
       <Canvas dpr={[1, 1.75]} camera={{ fov: 55, near: 0.1, far: 90, position: [SPAWN.x, 2.8, SPAWN.z + 3] }}>
         <Scene wallsRef={wallsRef} lightSala={view.lightSala} />
         {SALAS.map((sala) => (
@@ -245,8 +244,6 @@ export default function Cine () {
         <Player game={game} wallsRef={wallsRef} onChange={sync} popcorn={items.popcorn > 0} drink={items.drink > 0} />
       </Canvas>
       <Hud
-        started={started}
-        onStart={start}
         room={view.room}
         target={view.target}
         seatedSala={seatedSala}

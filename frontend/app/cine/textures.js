@@ -20,17 +20,26 @@ async function ready () {
   ]).catch(() => {})
 }
 
+// Si una imagen no carga se devuelve null y no se guarda el fallo, para reintentarla la próxima vez
 const images = new Map()
 function loadImage (src) {
   if (!images.has(src)) {
-    images.set(src, new Promise((resolve, reject) => {
+    images.set(src, new Promise((resolve) => {
       const image = new Image()
       image.onload = () => resolve(image)
-      image.onerror = reject
+      image.onerror = () => {
+        images.delete(src)
+        resolve(null)
+      }
       image.src = src
     }))
   }
   return images.get(src)
+}
+
+// Descarga por adelantado las imágenes de una sala
+export function preloadImages (slides) {
+  for (const slide of slides) if (slide.image) loadImage(slide.image.src)
 }
 
 function toTexture (canvas, repeat) {
@@ -166,15 +175,21 @@ const painters = {
 
   feature (ctx, slide, k, accent, image) {
     const frame = { x: 110, y: 170, width: 1090, height: 760 }
-    const scale = Math.min(frame.width / image.width, frame.height / image.height)
-    const width = image.width * scale
-    const height = image.height * scale
+    const source = image ?? { width: 16, height: 9 }
+    const scale = Math.min(frame.width / source.width, frame.height / source.height)
+    const width = source.width * scale
+    const height = source.height * scale
     const x = frame.x + (frame.width - width) / 2
     const y0 = frame.y + (frame.height - height) / 2
     ctx.save()
     roundedRect(ctx, x, y0, width, height, 16)
     ctx.clip()
-    ctx.drawImage(image, x, y0, width, height)
+    if (image) {
+      ctx.drawImage(image, x, y0, width, height)
+    } else {
+      ctx.fillStyle = '#17171b'
+      ctx.fillRect(x, y0, width, height)
+    }
     ctx.restore()
     ctx.strokeStyle = '#2e2e35'
     ctx.lineWidth = 2
@@ -225,7 +240,9 @@ export async function makeSlideTexture (slide, context, size = 1920) {
     const bottom = painters[slide.type](ctx, slide, k, context.accent, image)
     if (bottom <= 955) break
   }
-  return toTexture(canvas)
+  const texture = toTexture(canvas)
+  texture.userData.incomplete = Boolean(slide.image && !image)
+  return texture
 }
 
 // Cartel de la cartelera
@@ -235,8 +252,8 @@ export async function makePosterTexture (poster) {
   ctx.fillStyle = '#131316'
   ctx.fillRect(0, 0, 640, 920)
 
-  if (poster.image) {
-    const image = await loadImage(poster.image.src)
+  const image = poster.image ? await loadImage(poster.image.src) : null
+  if (image) {
     const scale = Math.max(640 / image.width, 560 / image.height)
     ctx.save()
     ctx.beginPath()
@@ -252,7 +269,7 @@ export async function makePosterTexture (poster) {
     ctx.fillRect(0, 0, 640, 560)
     ctx.font = `italic 400 190px ${serif()}`
     ctx.fillStyle = INK
-    ctx.fillText(poster.glyph, 46, 360)
+    ctx.fillText(poster.glyph ?? '', 46, 360)
   }
 
   ctx.fillStyle = poster.accent

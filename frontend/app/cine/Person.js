@@ -7,10 +7,11 @@ import * as THREE from 'three'
 const GEO = {
   leg: new THREE.CapsuleGeometry(0.075, 0.5, 4, 10),
   torso: new THREE.CapsuleGeometry(0.19, 0.4, 6, 14),
-  arm: new THREE.CapsuleGeometry(0.058, 0.4, 4, 10),
+  arm: new THREE.CapsuleGeometry(0.058, 0.15, 4, 10),
   head: new THREE.SphereGeometry(0.155, 18, 16),
   hair: new THREE.SphereGeometry(0.165, 18, 12, 0, Math.PI * 2, 0, Math.PI * 0.58),
   eye: new THREE.SphereGeometry(0.018, 8, 8),
+  hand: new THREE.SphereGeometry(0.062, 10, 8),
   shadow: new THREE.CircleGeometry(0.34, 20),
   bucket: new THREE.CylinderGeometry(0.11, 0.08, 0.2, 14),
   popcorn: new THREE.SphereGeometry(0.11, 10, 8, 0, Math.PI * 2, 0, Math.PI / 2),
@@ -23,6 +24,10 @@ export function flat (color) {
   if (!materials.has(color)) materials.set(color, new THREE.MeshLambertMaterial({ color }))
   return materials.get(color)
 }
+
+// Brazo que sujeta algo: [hombro, codo, giro hacia dentro]. El objeto se inclina lo contrario para quedar derecho.
+const HOLD = [-0.3, -1.3, 0]
+const HELD_TILT = 1.6
 
 const shadowMaterial = new THREE.MeshBasicMaterial({ color: '#000000', transparent: true, opacity: 0.28, depthWrite: false })
 
@@ -51,11 +56,15 @@ const Person = forwardRef(function Person ({ look, motion, seated = false, phase
   const legR = useRef()
   const armL = useRef()
   const armR = useRef()
+  const elbowL = useRef()
+  const elbowR = useRef()
+  const turnL = useRef()
+  const turnR = useRef()
   const body = useRef()
 
   useImperativeHandle(ref, () => root.current)
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     const m = motion?.current
     const t = state.clock.elapsedTime * 8.5 + phase
     const moving = Boolean(m?.moving)
@@ -70,14 +79,21 @@ const Person = forwardRef(function Person ({ look, motion, seated = false, phase
       body.current.position.y = moving ? Math.abs(Math.cos(t)) * 0.035 : Math.sin(state.clock.elapsedTime * 1.6 + phase) * 0.006
     }
 
-    // Con algo en la mano el brazo va doblado; al comer o beber sube hasta la boca
+    // Cada cosa va en una mano: las palomitas en la izquierda y el refresco en la derecha.
+    // Cada brazo tiene hombro, codo y un giro hacia dentro; al comer o beber la mano sube hasta la boca.
     const now = performance.now()
     const eating = m?.eating > now
     const drinking = m?.drinking > now
-    const bite = Math.abs(Math.sin(state.clock.elapsedTime * 9))
-    armL.current.rotation.x = popcorn ? -1.15 : seated ? -0.5 : -swing * 0.7
-    armR.current.rotation.x = drinking ? -2.35 : eating ? -1.6 - bite * 0.75 : drink ? -1.15 : seated ? -0.5 : swing * 0.7
-    armR.current.rotation.z = eating && !drink ? 0.35 : 0
+    const bite = Math.sin(state.clock.elapsedTime * 11) * 0.12
+    const ease = Math.min(1, delta * 12)
+    const pose = (shoulder, elbow, turn, target) => {
+      shoulder.current.rotation.x += (target[0] - shoulder.current.rotation.x) * ease
+      elbow.current.rotation.x += (target[1] - elbow.current.rotation.x) * ease
+      turn.current.rotation.y += (target[2] - turn.current.rotation.y) * ease
+    }
+    const rest = (side) => seated ? [-0.35, -1.1, 0] : [side * swing * 0.7, -0.15, 0]
+    pose(armL, elbowL, turnL, eating ? [-1.1, -1.9 + bite, 0.5] : popcorn ? HOLD : rest(-1))
+    pose(armR, elbowR, turnR, drinking ? [-1.1, -1.9, -0.5] : drink ? HOLD : rest(1))
   })
 
   return (
@@ -91,23 +107,35 @@ const Person = forwardRef(function Person ({ look, motion, seated = false, phase
           <mesh geometry={GEO.leg} material={flat(look.bottom)} position={[0, -0.4, 0]} />
         </group>
         <mesh geometry={GEO.torso} material={flat(look.top)} position={[0, 1.1, 0]} scale={[1, 1, 0.74]} />
-        <group ref={armL} position={[-0.27, 1.34, 0]}>
-          <mesh geometry={GEO.arm} material={flat(look.top)} position={[0, -0.26, 0]} />
-          {popcorn && (
-            <group position={[0.06, -0.5, 0.05]} rotation={[1.15, 0, 0]}>
-              <mesh geometry={GEO.bucket} material={flat('#d43a4c')} />
-              <mesh geometry={GEO.popcorn} material={flat('#f6dc7a')} position={[0, 0.1, 0]} />
+        <group ref={turnL} position={[-0.27, 1.34, 0]}>
+          <group ref={armL}>
+            <mesh geometry={GEO.arm} material={flat(look.top)} position={[0, -0.12, 0]} />
+            <group ref={elbowL} position={[0, -0.24, 0]}>
+              <mesh geometry={GEO.arm} material={flat(look.top)} position={[0, -0.12, 0]} />
+              <mesh geometry={GEO.hand} material={flat(look.skin)} position={[0, -0.25, 0]} />
+              {popcorn && (
+                <group position={[0, -0.3, 0.1]} rotation={[HELD_TILT, 0, 0]}>
+                  <mesh geometry={GEO.bucket} material={flat('#d43a4c')} />
+                  <mesh geometry={GEO.popcorn} material={flat('#f6dc7a')} position={[0, 0.1, 0]} />
+                </group>
+              )}
             </group>
-          )}
+          </group>
         </group>
-        <group ref={armR} position={[0.27, 1.34, 0]}>
-          <mesh geometry={GEO.arm} material={flat(look.top)} position={[0, -0.26, 0]} />
-          {drink && (
-            <group position={[-0.04, -0.5, 0.05]} rotation={[1.15, 0, 0]}>
-              <mesh geometry={GEO.cup} material={flat('#3f6fd8')} />
-              <mesh geometry={GEO.straw} material={flat('#f2f2f0')} position={[0.02, 0.15, 0]} />
+        <group ref={turnR} position={[0.27, 1.34, 0]}>
+          <group ref={armR}>
+            <mesh geometry={GEO.arm} material={flat(look.top)} position={[0, -0.12, 0]} />
+            <group ref={elbowR} position={[0, -0.24, 0]}>
+              <mesh geometry={GEO.arm} material={flat(look.top)} position={[0, -0.12, 0]} />
+              <mesh geometry={GEO.hand} material={flat(look.skin)} position={[0, -0.25, 0]} />
+              {drink && (
+                <group position={[0, -0.3, 0.08]} rotation={[HELD_TILT, 0, 0]}>
+                  <mesh geometry={GEO.cup} material={flat('#3f6fd8')} />
+                  <mesh geometry={GEO.straw} material={flat('#f2f2f0')} position={[0.02, 0.15, 0]} />
+                </group>
+              )}
             </group>
-          )}
+          </group>
         </group>
         <mesh geometry={GEO.head} material={flat(look.skin)} position={[0, 1.6, 0]} />
         <mesh geometry={GEO.hair} material={flat(look.hair)} position={[0, 1.615, -0.015]} rotation={[-0.25, 0, 0]} />
