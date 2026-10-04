@@ -1,72 +1,37 @@
-'use client'
 import './globals.css'
+import { Inter_Tight, Instrument_Serif, JetBrains_Mono } from 'next/font/google'
 import Header from './components/Header'
+import Footer from './components/Footer'
 
-import { useRef, useEffect, useState } from 'react'
-import { usePathname } from 'next/navigation'
+const sans = Inter_Tight({ subsets: ['latin'], variable: '--font-sans' })
+const serif = Instrument_Serif({ subsets: ['latin'], weight: '400', style: ['normal', 'italic'], variable: '--font-serif', adjustFontFallback: false })
+const mono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-mono' })
+
+export const metadata = {
+  metadataBase: new URL('https://enekof.dev'),
+  title: {
+    default: 'Eneko Fernández | Desarrollador full stack',
+    template: '%s | Eneko Fernández'
+  },
+  description:
+    'Portfolio de Eneko Fernández, desarrollador full stack. Askesis, Chronia Timeline y OurMap: productos web construidos con React, Next.js y Node.',
+  icons: { icon: '/iconImages/fav.png' },
+  openGraph: {
+    title: 'Eneko Fernández | Desarrollador full stack',
+    description: 'Askesis, Chronia Timeline y OurMap: productos web construidos con React, Next.js y Node.',
+    type: 'website',
+    locale: 'es_ES',
+    images: [{ url: '/og/home.jpg', width: 1200, height: 630 }]
+  }
+}
 
 export default function RootLayout ({ children }) {
-  const circleRef = useRef(null)
-  const [title, setTitle] = useState()
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      const circle = circleRef.current
-      circle.style.setProperty('--top', `${e.pageY}px`)
-      circle.style.setProperty('--left', `${e.pageX}px`)
-    }
-    document.addEventListener('mousemove', handleMouseMove)
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-    }
-  }, [])
-
-  const path = usePathname()
-
-  useEffect(() => {
-    switch (path) {
-      case '/':
-        setTitle('Inicio | Eneko Fernández')
-        break
-      case '/projects':
-        setTitle('Proyectos | Eneko Fernández')
-        break
-      case '/about':
-        setTitle('Sobre mí | Eneko Fernández')
-        break
-      case '/contact':
-        setTitle('Contacto | Eneko Fernández')
-        break
-    }
-  })
-
   return (
-    <html lang='es'>
-      <head>
-        <link rel='icon' href='/iconImages/fav.png' sizes='200x200' />
-        <link rel='preconnect' href='https://fonts.googleapis.com' />
-        <link
-          rel='preconnect'
-          href='https://fonts.gstatic.com'
-          crossOrigin='true'
-        />
-        <link
-          href='https://fonts.googleapis.com/css2?family=Alegreya+Sans&display=swap'
-          rel='stylesheet'
-        />
-
-        <title>{title}</title>
-      </head>
-
-      {/* <body className="w-full m-auto bg-gradient-to-b min-h-screen from-cyan-950 to-zinc-600 ">   */}
-      <body className='w-full m-auto bg-gradient-to-b min-h-screen bg-black/90 '>
-        <div
-          ref={circleRef}
-          className='light top-[var(--top)] left-[var(--left)] '
-        />
+    <html lang='es' className={`${sans.variable} ${serif.variable} ${mono.variable}`}>
+      <body className='min-h-screen font-sans antialiased'>
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   )
