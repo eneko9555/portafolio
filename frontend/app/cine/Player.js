@@ -9,6 +9,7 @@ import { sounds } from './audio'
 const WALK_SPEED = 3.4
 const RUN_SPEED = 5.8
 const TURN_SPEED = 2
+const TOUCH_GAIN = 1.8
 const CAMERA_DISTANCE = 4.6
 const HEAD_HEIGHT = 1.5
 const BASE_FOV = 55
@@ -46,8 +47,10 @@ export default function Player ({ game, wallsRef, onChange, onGate, popcorn, dri
     const up = (e) => { if (last?.id === e.pointerId) last = null }
     const move = (e) => {
       if (!last || last.id !== e.pointerId || game.current.seated) return
-      game.current.yaw -= (e.clientX - last.x) * 0.005
-      game.current.pitch = THREE.MathUtils.clamp(game.current.pitch + (e.clientY - last.y) * 0.004, 0.05, 0.9)
+      // Una pantalla de móvil tiene pocos píxeles de recorrido: el dedo gira más que el ratón
+      const gain = e.pointerType === 'touch' ? TOUCH_GAIN : 1
+      game.current.yaw -= (e.clientX - last.x) * 0.005 * gain
+      game.current.pitch = THREE.MathUtils.clamp(game.current.pitch + (e.clientY - last.y) * 0.004 * gain, 0.05, 0.9)
       last.x = e.clientX
       last.y = e.clientY
     }

@@ -273,7 +273,8 @@ export default function Cine () {
 
   return (
     <div className='fixed inset-0 z-50 select-none bg-bg' onContextMenu={(e) => e.preventDefault()}>
-      <Canvas dpr={[1, 1.75]} camera={{ fov: 55, near: 0.1, far: 90, position: [SPAWN.x, 2.8, SPAWN.z + 3] }}>
+      {/* touch-none: sin esto el navegador se queda el gesto para desplazar la página y corta el giro de cámara */}
+      <Canvas className='touch-none' dpr={[1, 1.75]} camera={{ fov: 55, near: 0.1, far: 90, position: [SPAWN.x, 2.8, SPAWN.z + 3] }}>
         <Scene wallsRef={wallsRef} lightSala={view.lightSala} dim={view.seated} gateOpen={items.ticket} game={game} />
         {SALAS.map((sala) => (
           <CinemaScreen key={sala.id} sala={sala} slide={slides[sala.id]} active={view.room === sala.id} />
